@@ -26,13 +26,14 @@ def main():
             else:
                 game.handle_event(event)
         
-        game.update()
+        dt = clock.tick(FPS) / 1000 
+        game.update(dt)
         game.draw()
         pygame.display.flip()
-        clock.tick(FPS)
+        #clock.tick(FPS)
     
     pygame.quit()
     sys.exit()
-    
+
 if __name__ == "__main__":
     main()

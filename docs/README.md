@@ -9,4 +9,4 @@ A tower defense game where players forge mythical creatures by combining element
 
 ## Run
 ```bash
-python main.pyp
+python main.py
