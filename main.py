@@ -1,14 +1,10 @@
 import pygame
 import sys
 from src.game import Game
+from src.utils import SCREEN_HEIGHT, SCREEN_WIDTH, FPS
 
 def main():
     pygame.init()
-    
-    # Game settings
-    SCREEN_WIDTH = 1024
-    SCREEN_HEIGHT = 768
-    FPS = 60
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption('Myth-Forge Defense')

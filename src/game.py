@@ -1,7 +1,9 @@
 import pygame, random
 import time
 from .enemy import Enemy
-from .map import PATH_POINTS, draw_path
+from .map import PATH_POINTS, TOWER_POINTS, TOWER_RECTS, draw_path, draw_tower_spots
+from .tower import Tower
+from .utils import COLORS
 
 class Game:
     def __init__(self, screen):
@@ -15,6 +17,9 @@ class Game:
         # Spawning behavior
         self.spawn_timer = 0
         self.spawn_interval = 1.5 # seconds
+
+        # Towers
+        self.towers = []
 
         # Enemies
         self.enemies = []
@@ -52,7 +57,33 @@ class Game:
             elif event.key == pygame.K_LEFT:
                 if self.state == "playing":
                     self.speed_factor /= 2.0
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                for i, rect in enumerate(TOWER_RECTS):
+                    if rect.collidepoint(event.pos):
+                        self.place_tower(i)
+                        break
     
+    def place_tower(self, spot_index):
+        if spot_index >= len(TOWER_POINTS):
+            return False
+        
+        spot_rect = TOWER_RECTS[spot_index]
+        for existing_tower in self.towers:
+            if spot_rect.collidepoint(existing_tower.x, existing_tower.y):
+                print("Spot already occupied!")
+                return False
+
+        x, y, width, height = TOWER_POINTS[spot_index]
+        
+        # Center the tower in the spot
+        tower_x = x + width // 2
+        tower_y = y + height // 2
+        
+        # Create tower
+        new_tower = Tower(tower_x, tower_y, width)
+        self.towers.append(new_tower)
+
     def update(self, dt):
         if self.state != "playing":
             return
@@ -97,6 +128,11 @@ class Game:
         # Placeholder: draw game world
         text = self.font.render("Myth-Forge Defense - Press ESC to pause", True, self.text_color)
         self.screen.blit(text, (10, 10))
+
+        # --- tower placement ---
+        draw_tower_spots(self.screen, TOWER_POINTS)
+        for tower in self.towers:
+            tower.draw(self.screen)
 
         # --- path + enemies ---
         draw_path(self.screen, PATH_POINTS)
