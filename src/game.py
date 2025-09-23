@@ -21,6 +21,7 @@ class Game:
 
         # Stats
         self.lives = 20
+        self.speed_factor = 1.0
         
         # Game state
         self.state = "playing"  # "menu", "playing", "paused", "game_over"
@@ -45,20 +46,28 @@ class Game:
                     self.state = "playing"
             elif event.key == pygame.K_r and self.state == "game_over":
                     self.reset_game(self.screen)
+            elif event.key == pygame.K_RIGHT:
+                if self.state == "playing":
+                    self.speed_factor *= 2.0
+            elif event.key == pygame.K_LEFT:
+                if self.state == "playing":
+                    self.speed_factor /= 2.0
     
     def update(self, dt):
         if self.state != "playing":
             return
         
+        adjusted_dt = dt * self.speed_factor
+
         # 1. Spawn logic
-        self.spawn_timer += dt
+        self.spawn_timer += adjusted_dt
         if self.spawn_timer >= self.spawn_interval:
             self.enemies.append(Enemy(PATH_POINTS))
             self.spawn_timer = 0
 
         # 2. Update every enemy
         for enemy in self.enemies:
-            enemy.update(dt)
+            enemy.update(adjusted_dt)
 
         # 3. Handle goal reached / cleanup
         for enemy in self.enemies[:]:
@@ -96,6 +105,8 @@ class Game:
         # --- UI text ---
         lives_txt = self.font.render(f"Lives: {self.lives}", True, (255,255,255))
         self.screen.blit(lives_txt, (900, 10))
+        speed_txt = self.font.render(f"Speed: {self.speed_factor}", True, (255,255,255))
+        self.screen.blit(speed_txt, (10, 740))
         
         # Draw placeholder path
         #pygame.draw.circle(self.screen, (100, 255, 100), (100, 100), 20)  # Start

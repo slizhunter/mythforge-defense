@@ -3,11 +3,11 @@ import pygame
 # A simple zig-zag path for demo
 PATH_POINTS = [
     (100, 100),
-    (400, 100),
-    (400, 300),
-    (700, 300),
-    (700, 550),
-    (950, 550)
+    (450, 100),
+    (450, 400),
+    (700, 400),
+    (700, 650),
+    (950, 650)
 ]
 
 def draw_path(screen, path_points):
