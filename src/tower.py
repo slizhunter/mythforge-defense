@@ -12,6 +12,7 @@ class Tower:
         self.range = tower_range
         self.fire_rate = fire_rate
         self.rect = tower_rect
+        self.target = None
         self.is_hovered = False
 
     def draw(self, screen):
@@ -33,6 +34,12 @@ class Tower:
         center2 = pygame.math.Vector2(enemy_pos)
         distance = center1.distance_to(center2)
         return distance < (self.range + enemy_radius)
+    
+    def set_target(self, enemy):
+        self.target = enemy
+
+    def get_target(self):
+        return self.target
 
     @classmethod
     def get_cost(cls):

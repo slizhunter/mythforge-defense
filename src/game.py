@@ -120,7 +120,12 @@ class Game:
         for t, tower in enumerate(self.towers):
             for e, enemy in enumerate(self.enemies):
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
-                    print(f"Enemy{e} in range of tower{t}!")
+                    if not tower.get_target():
+                        tower.set_target(enemy)
+                        print(f"Enemy{e} in range of tower{t}!")
+                else:
+                    if tower.get_target() == enemy:
+                        tower.set_target(None)
 
         # Game-over check
         if self.lives <= 0:
