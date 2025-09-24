@@ -1,19 +1,35 @@
 import pygame
 from .utils import Colors
 from .map import TOWER_RECTS
+from .projectile import Projectile
 
 class Tower:
     COST = 20
 
-    def __init__(self, x_pos, y_pos, tower_size, tower_range, tower_rect, fire_rate=50):
+    def __init__(self, x_pos, y_pos, tower_size, tower_range, tower_rect, fire_rate=2):
         self.x = x_pos
         self.y = y_pos
         self.size = tower_size
         self.range = tower_range
         self.fire_rate = fire_rate
+        self.fire_timer = 0 # Time since last shot
+        self.game = None  # Will be set when tower is added to the game
         self.rect = tower_rect
         self.target = None
         self.is_hovered = False
+    
+    def update(self, dt):
+        # First check if target is still valid
+        if self.target and (self.target.is_dead() or not self.detect_enemy(self.target.get_pos(), self.target.get_size())):
+            self.target = None
+            return
+
+        self.fire_timer += dt
+        
+        # Check if we can fire
+        if self.target and self.fire_timer >= 1.0 / self.fire_rate:
+            self.fire_at(self.target)
+            self.fire_timer = 0
 
     def draw(self, screen):
         if self.is_hovered:
@@ -27,9 +43,6 @@ class Tower:
             self.is_hovered = False
 
     def detect_enemy(self, enemy_pos, enemy_radius):
-        """
-        Checks for collision between two circles using pygame.math.Vector2.
-        """
         center1 = pygame.math.Vector2((self.x, self.y))
         center2 = pygame.math.Vector2(enemy_pos)
         distance = center1.distance_to(center2)
@@ -40,6 +53,13 @@ class Tower:
 
     def get_target(self):
         return self.target
+    
+    def fire_at(self, enemy):
+        new_projectile = Projectile(
+            start_pos=(self.x, self.y),
+            target_pos=enemy.get_pos()
+        )
+        self.game.projectiles.add(new_projectile)
 
     @classmethod
     def get_cost(cls):

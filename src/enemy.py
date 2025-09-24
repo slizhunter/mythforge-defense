@@ -1,18 +1,25 @@
 import pygame
 
-class Enemy:
-    def __init__(self, path_points, speed=120, max_hp=20):
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, path_points, speed=120, max_hp=20, value = 5):
+        super().__init__()
         self.path = path_points
         self.current_wp = 0   # waypoint index
         self.x, self.y = self.path[self.current_wp]
         self.speed = speed  # pixels per second
         self.max_hp = max_hp
         self.hp = max_hp
+        self.value = value  # money given when killed
         self.reached_goal = False
 
         # simple visuals
         self.color = (230, 70, 70)
         self.radius = 14
+        
+        # Create sprite image and rect
+        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, self.color, (self.radius, self.radius), self.radius)
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
     def update(self, dt):
         if self.reached_goal:
@@ -38,12 +45,21 @@ class Enemy:
             # Move toward next waypoint
             self.x += step * dx / dist
             self.y += step * dy / dist
+            self.rect.center = (self.x, self.y)
     
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius)
 
+    def take_damage(self, amount):
+        self.hp -= amount
+        if self.hp < 0:
+            self.hp = 0
+
     def is_dead(self):
         return self.hp <= 0
+    
+    def get_value(self):
+        return self.value
     
     def get_pos(self):
         return (self.x, self.y)

@@ -10,6 +10,7 @@ class Game:
         self.init_game(screen)
 
     def init_game(self, screen):
+        # Screen info
         self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
@@ -22,7 +23,10 @@ class Game:
         self.towers = []
 
         # Enemies
-        self.enemies = []
+        self.enemies = pygame.sprite.Group()
+
+        # Projectiles
+        self.projectiles = pygame.sprite.Group()
 
         # Stats
         self.lives = 20
@@ -87,6 +91,7 @@ class Game:
         
         # Create tower
         new_tower = Tower(tower_x, tower_y, width, 200, TOWER_RECTS[spot_index])
+        new_tower.game = self  # Link back to game for projectile management
         self.towers.append(new_tower)
 
         # Deduct tower cost
@@ -101,23 +106,25 @@ class Game:
         # Spawn logic
         self.spawn_timer += adjusted_dt
         if self.spawn_timer >= self.spawn_interval:
-            self.enemies.append(Enemy(PATH_POINTS))
+            new_enemy = Enemy(PATH_POINTS)
+            self.enemies.add(new_enemy)
             self.spawn_timer = 0
 
         # Update every enemy
-        for enemy in self.enemies:
-            enemy.update(adjusted_dt)
+        self.enemies.update(adjusted_dt)
 
         # Handle goal reached / cleanup
-        for enemy in self.enemies[:]:
+        for enemy in list(self.enemies):
             if enemy.reached_goal:
-                self.enemies.remove(enemy)
+                enemy.kill()  # Removes from all sprite groups
                 self.lives -= 1
             elif enemy.is_dead():
-                self.enemies.remove(enemy)
+                enemy.kill()
+                self.money += enemy.get_value()
         
         # Check if enemy is in tower range
         for t, tower in enumerate(self.towers):
+            tower.update(adjusted_dt)
             for e, enemy in enumerate(self.enemies):
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     if not tower.get_target():
@@ -126,6 +133,15 @@ class Game:
                 else:
                     if tower.get_target() == enemy:
                         tower.set_target(None)
+
+        # Update projectiles
+        self.projectiles.update(adjusted_dt)
+        
+        # Check projectile collisions with enemies
+        hits = pygame.sprite.groupcollide(self.projectiles, self.enemies, True, False)
+        for projectile, enemies_hit in hits.items():
+            for enemy in enemies_hit:
+                enemy.take_damage(projectile.damage)
 
         # Game-over check
         if self.lives <= 0:
@@ -159,6 +175,9 @@ class Game:
         draw_path(self.screen, PATH_POINTS)
         for enemy in self.enemies:
             enemy.draw(self.screen)
+
+        # --- projectiles ---
+        self.projectiles.draw(self.screen)
 
         # --- UI text ---
         money_txt = self.font.render(f"Money: {self.money}", True, (255,255,255))
