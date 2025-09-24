@@ -26,6 +26,7 @@ class Game:
 
         # Stats
         self.lives = 20
+        self.money = 100
         self.speed_factor = 1.0
         
         # Game state
@@ -74,6 +75,10 @@ class Game:
                 print("Spot already occupied!")
                 return False
 
+        if self.money < Tower.get_cost():
+            print("Insufficient money!")
+            return False
+
         x, y, width, height = TOWER_POINTS[spot_index]
         
         # Center the tower in the spot
@@ -82,6 +87,7 @@ class Game:
         
         # Create tower
         new_tower = Tower(tower_x, tower_y, width)
+        self.money -= Tower.get_cost()
         self.towers.append(new_tower)
 
     def update(self, dt):
@@ -126,7 +132,7 @@ class Game:
     
     def draw_playing(self):
         # Placeholder: draw game world
-        text = self.font.render("Myth-Forge Defense - Press ESC to pause", True, self.text_color)
+        text = self.font.render("Myth-Forge Defense", True, self.text_color)
         self.screen.blit(text, (10, 10))
 
         # --- tower placement ---
@@ -138,15 +144,14 @@ class Game:
         draw_path(self.screen, PATH_POINTS)
         for enemy in self.enemies:
             enemy.draw(self.screen)
+
         # --- UI text ---
+        money_txt = self.font.render(f"Money: {self.money}", True, (255,255,255))
+        self.screen.blit(money_txt, (500, 10))
         lives_txt = self.font.render(f"Lives: {self.lives}", True, (255,255,255))
         self.screen.blit(lives_txt, (900, 10))
         speed_txt = self.font.render(f"Speed: {self.speed_factor}", True, (255,255,255))
         self.screen.blit(speed_txt, (10, 740))
-        
-        # Draw placeholder path
-        #pygame.draw.circle(self.screen, (100, 255, 100), (100, 100), 20)  # Start
-        #pygame.draw.circle(self.screen, (255, 100, 100), (900, 600), 20)  # End
     
     def draw_paused(self):
         # Semi-transparent overlay
