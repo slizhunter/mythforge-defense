@@ -3,7 +3,7 @@ import time
 from .enemy import Enemy
 from .map import PATH_POINTS, TOWER_POINTS, TOWER_RECTS, draw_path, draw_tower_spots
 from .tower import Tower
-from .utils import COLORS
+from .utils import Colors
 
 class Game:
     def __init__(self, screen):
@@ -59,7 +59,7 @@ class Game:
                 if self.state == "playing":
                     self.speed_factor /= 2.0
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1: # left mouse click
                 for i, rect in enumerate(TOWER_RECTS):
                     if rect.collidepoint(event.pos):
                         self.place_tower(i)
@@ -86,9 +86,11 @@ class Game:
         tower_y = y + height // 2
         
         # Create tower
-        new_tower = Tower(tower_x, tower_y, width)
-        self.money -= Tower.get_cost()
+        new_tower = Tower(tower_x, tower_y, width, 200, TOWER_RECTS[spot_index])
         self.towers.append(new_tower)
+
+        # Deduct tower cost
+        self.money -= Tower.get_cost()
 
     def update(self, dt):
         if self.state != "playing":
@@ -137,7 +139,9 @@ class Game:
 
         # --- tower placement ---
         draw_tower_spots(self.screen, TOWER_POINTS)
+        mouse_pos = pygame.mouse.get_pos()
         for tower in self.towers:
+            tower.update_hover(mouse_pos)
             tower.draw(self.screen)
 
         # --- path + enemies ---
