@@ -98,25 +98,31 @@ class Game:
         
         adjusted_dt = dt * self.speed_factor
 
-        # 1. Spawn logic
+        # Spawn logic
         self.spawn_timer += adjusted_dt
         if self.spawn_timer >= self.spawn_interval:
             self.enemies.append(Enemy(PATH_POINTS))
             self.spawn_timer = 0
 
-        # 2. Update every enemy
+        # Update every enemy
         for enemy in self.enemies:
             enemy.update(adjusted_dt)
 
-        # 3. Handle goal reached / cleanup
+        # Handle goal reached / cleanup
         for enemy in self.enemies[:]:
             if enemy.reached_goal:
                 self.enemies.remove(enemy)
                 self.lives -= 1
             elif enemy.is_dead():
                 self.enemies.remove(enemy)
+        
+        # Check if enemy is in tower range
+        for t, tower in enumerate(self.towers):
+            for e, enemy in enumerate(self.enemies):
+                if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
+                    print(f"Enemy{e} in range of tower{t}!")
 
-        # 4. Game-over check
+        # Game-over check
         if self.lives <= 0:
             self.state = "game_over"
     

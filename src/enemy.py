@@ -44,3 +44,9 @@ class Enemy:
 
     def is_dead(self):
         return self.hp <= 0
+    
+    def get_pos(self):
+        return (self.x, self.y)
+    
+    def get_size(self):
+        return self.radius

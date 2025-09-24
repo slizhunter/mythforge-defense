@@ -25,6 +25,15 @@ class Tower:
         else:
             self.is_hovered = False
 
+    def detect_enemy(self, enemy_pos, enemy_radius):
+        """
+        Checks for collision between two circles using pygame.math.Vector2.
+        """
+        center1 = pygame.math.Vector2((self.x, self.y))
+        center2 = pygame.math.Vector2(enemy_pos)
+        distance = center1.distance_to(center2)
+        return distance < (self.range + enemy_radius)
+
     @classmethod
     def get_cost(cls):
         return cls.COST
