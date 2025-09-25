@@ -3,6 +3,8 @@ import time
 from .enemy import Enemy
 from .map import PATH_POINTS, TOWER_POINTS, TOWER_RECTS, draw_path, draw_tower_spots
 from .tower import Tower
+from .projectile import Projectile
+from .wave_manager import WaveManager
 from .utils import Colors
 
 class Game:
@@ -16,8 +18,7 @@ class Game:
         self.screen_height = screen.get_height()
 
         # Spawning behavior
-        self.spawn_timer = 0
-        self.spawn_interval = 1.5 # seconds
+        self.wave_manager = WaveManager(PATH_POINTS)
 
         # Towers
         self.towers = []
@@ -34,7 +35,7 @@ class Game:
         self.speed_factor = 1.0
         
         # Game state
-        self.state = "playing"  # "menu", "playing", "paused", "game_over"
+        self.state = "playing"  # "menu", "playing", "paused", "game_over", "victory"
         
         # Colors for testing
         self.bg_color = (50, 50, 50)
@@ -54,7 +55,7 @@ class Game:
                     self.state = "paused"
                 elif self.state == "paused":
                     self.state = "playing"
-            elif event.key == pygame.K_r and self.state == "game_over":
+            elif event.key == pygame.K_r and (self.state == "game_over" or self.state == "victory"):
                     self.reset_game(self.screen)
             elif event.key == pygame.K_RIGHT:
                 if self.state == "playing":
@@ -68,34 +69,6 @@ class Game:
                     if rect.collidepoint(event.pos):
                         self.place_tower(i)
                         break
-    
-    def place_tower(self, spot_index):
-        if spot_index >= len(TOWER_POINTS):
-            return False
-        
-        spot_rect = TOWER_RECTS[spot_index]
-        for existing_tower in self.towers:
-            if spot_rect.collidepoint(existing_tower.x, existing_tower.y):
-                print("Spot already occupied!")
-                return False
-
-        if self.money < Tower.get_cost():
-            print("Insufficient money!")
-            return False
-
-        x, y, width, height = TOWER_POINTS[spot_index]
-        
-        # Center the tower in the spot
-        tower_x = x + width // 2
-        tower_y = y + height // 2
-        
-        # Create tower
-        new_tower = Tower(tower_x, tower_y, width, 200, TOWER_RECTS[spot_index])
-        new_tower.game = self  # Link back to game for projectile management
-        self.towers.append(new_tower)
-
-        # Deduct tower cost
-        self.money -= Tower.get_cost()
 
     def update(self, dt):
         if self.state != "playing":
@@ -103,12 +76,15 @@ class Game:
         
         adjusted_dt = dt * self.speed_factor
 
+        # Check for victory (all waves complete and no enemies left)
+        if (self.wave_manager.current_wave >= len(self.wave_manager.waves) - 1 and 
+            not self.wave_manager.wave_in_progress and 
+            len(self.enemies) == 0):
+            self.state = "victory"
+            return
+
         # Spawn logic
-        self.spawn_timer += adjusted_dt
-        if self.spawn_timer >= self.spawn_interval:
-            new_enemy = Enemy(PATH_POINTS)
-            self.enemies.add(new_enemy)
-            self.spawn_timer = 0
+        self.wave_manager.update(adjusted_dt, self.enemies)
 
         # Update every enemy
         self.enemies.update(adjusted_dt)
@@ -158,6 +134,8 @@ class Game:
             self.draw_paused()
         elif self.state == "game_over":
             self.draw_over()
+        elif self.state == "victory":
+            self.draw_victory()
     
     def draw_playing(self):
         # Placeholder: draw game world
@@ -178,6 +156,15 @@ class Game:
 
         # --- projectiles ---
         self.projectiles.draw(self.screen)
+
+        # Add wave information to UI
+        wave_info = self.wave_manager.get_wave_info()
+        wave_txt = self.font.render(f"Wave: {wave_info['current_wave']}/{wave_info['total_waves']}", True, (255,255,255))
+        self.screen.blit(wave_txt, (700, 10))
+        
+        if wave_info['break_timer'] > 0:
+            break_txt = self.font.render(f"Next wave in: {wave_info['break_timer']:.1f}", True, (255,255,255))
+            self.screen.blit(break_txt, (self.screen_width//2 - 100, 50))
 
         # --- UI text ---
         money_txt = self.font.render(f"Money: {self.money}", True, (255,255,255))
@@ -203,3 +190,36 @@ class Game:
         text = self.font.render("Game Over - Press R to restart", True, self.text_color)
         text_rect = text.get_rect(center=(self.screen_width//2, self.screen_height//2))
         self.screen.blit(text, text_rect)
+
+    def draw_victory(self):
+        text = self.font.render("You Won! - Press R to restart", True, self.text_color)
+        text_rect = text.get_rect(center=(self.screen_width//2, self.screen_height//2))
+        self.screen.blit(text, text_rect)
+
+    def place_tower(self, spot_index):
+        if spot_index >= len(TOWER_POINTS):
+            return False
+        
+        spot_rect = TOWER_RECTS[spot_index]
+        for existing_tower in self.towers:
+            if spot_rect.collidepoint(existing_tower.x, existing_tower.y):
+                print("Spot already occupied!")
+                return False
+
+        if self.money < Tower.get_cost():
+            print("Insufficient money!")
+            return False
+
+        x, y, width, height = TOWER_POINTS[spot_index]
+        
+        # Center the tower in the spot
+        tower_x = x + width // 2
+        tower_y = y + height // 2
+        
+        # Create tower
+        new_tower = Tower(tower_x, tower_y, width, 200, TOWER_RECTS[spot_index])
+        new_tower.game = self  # Link back to game for projectile management
+        self.towers.append(new_tower)
+
+        # Deduct tower cost
+        self.money -= Tower.get_cost()

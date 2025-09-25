@@ -2,7 +2,7 @@ import pygame
 import math
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target_pos, speed=200, damage=10):
+    def __init__(self, start_pos, target_pos, speed=300, damage=10):
         super().__init__()
         self.image = pygame.Surface((4, 4))
         self.image.fill((255, 255, 0))  # Yellow projectile
