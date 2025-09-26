@@ -50,6 +50,10 @@ class Game:
         self.small_font = pygame.font.SysFont('Arial', UI_CONFIG["font_size_small"])
     
     def reset_game(self, screen):
+        self.enemies.empty()
+        self.towers.clear()
+        self.projectiles.empty()
+        self.wave_manager.reset()
         self.init_game(screen)
     
     def handle_event(self, event):
@@ -157,7 +161,7 @@ class Game:
         for projectile, enemies_hit in hits.items():
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)
-                print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
+                #print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
 
     def draw(self):
         # Clear screen
