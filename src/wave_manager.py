@@ -19,10 +19,8 @@ class WaveManager:
             # Add more waves as needed
         ]
 
-        # Start first wave immediately
-        self.start_next_wave()
-
     def start_next_wave(self):
+        print(f"Starting wave {self.current_wave + 2}")
         # Only increment if we haven't reached the last wave
         if self.current_wave + 1 < len(self.waves):
             self.current_wave += 1
@@ -65,6 +63,12 @@ class WaveManager:
             self.wave_timer = 0
     
     def get_wave_info(self):
+        if self.current_wave == -1:  # First wave hasn't started
+            return {
+                "current_wave": 1,  # Show as wave 1
+                "total_waves": len(self.waves),
+                "break_timer": self.wave_interval - self.wave_timer
+            }
         return {
             "current_wave": self.current_wave + 1,
             "total_waves": len(self.waves),

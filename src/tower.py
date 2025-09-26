@@ -20,7 +20,11 @@ class Tower:
     
     def update(self, dt):
         # First check if target is still valid
-        if self.target and (self.target.is_dead() or not self.detect_enemy(self.target.get_pos(), self.target.get_size())):
+        if self.target and (
+            self.target.is_dead() or 
+            not self.detect_enemy(self.target.get_pos(), self.target.get_size()) or
+            self.target not in self.game.enemies
+        ):
             self.target = None
             return
 
@@ -57,7 +61,7 @@ class Tower:
     def fire_at(self, enemy):
         new_projectile = Projectile(
             start_pos=(self.x, self.y),
-            target_pos=enemy.get_pos()
+            target_enemy=enemy
         )
         self.game.projectiles.add(new_projectile)
 

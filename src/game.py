@@ -138,7 +138,7 @@ class Game:
             self.draw_victory()
     
     def draw_playing(self):
-        # Placeholder: draw game world
+        # --- draw game world ---
         text = self.font.render("Myth-Forge Defense", True, self.text_color)
         self.screen.blit(text, (10, 10))
 
@@ -157,7 +157,7 @@ class Game:
         # --- projectiles ---
         self.projectiles.draw(self.screen)
 
-        # Add wave information to UI
+        # --- wave info ---
         wave_info = self.wave_manager.get_wave_info()
         wave_txt = self.font.render(f"Wave: {wave_info['current_wave']}/{wave_info['total_waves']}", True, (255,255,255))
         self.screen.blit(wave_txt, (700, 10))
@@ -175,6 +175,8 @@ class Game:
         self.screen.blit(speed_txt, (10, 740))
     
     def draw_paused(self):
+        self.draw_playing()
+
         # Semi-transparent overlay
         overlay = pygame.Surface((self.screen_width, self.screen_height))
         overlay.set_alpha(128)

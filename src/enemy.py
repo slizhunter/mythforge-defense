@@ -7,6 +7,7 @@ class Enemy(pygame.sprite.Sprite):
         self.current_wp = 0   # waypoint index
         self.x, self.y = self.path[self.current_wp]
         self.speed = speed  # pixels per second
+        self.direction = (0, 0)  # Will be set in update
         self.max_hp = max_hp
         self.hp = max_hp
         self.value = value  # money given when killed
@@ -46,6 +47,8 @@ class Enemy(pygame.sprite.Sprite):
             self.x += step * dx / dist
             self.y += step * dy / dist
             self.rect.center = (self.x, self.y)
+        
+        self.direction = (dx / dist, dy / dist) if dist != 0 else (0, 0)
     
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius)
