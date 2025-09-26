@@ -26,24 +26,59 @@ ENEMY_CONFIG = {
     'base_speed': 100,      # pixels per second
     'base_hp': 20,
     'base_value': 5,         # money given when killed
-    'basic': {
-        'speed': 100,
-        'hp': 20,
-        'value': 5,
-        'color': (70, 130, 180)  # Steel blue
-    },
-    'fast': {
-        'speed': 150,
-        'hp': 15,
-        'value': 7,
-        'color': (255, 165, 0)  # Orange
-    },
-    'tank': {
-        'speed': 70,
-        'hp': 50,
-        'value': 15,
-        'color': (139, 69, 19)  # Saddle brown
+    'types': {
+        'basic': {
+            'class': 'BasicEnemy',
+            'speed': 100,
+            'hp': 20,
+            'value': 5,
+            'color': (70, 130, 180),  # Steel blue
+            'radius': 14
+        },
+        'fast': {
+            'class': 'FastEnemy',
+            'speed': 200,
+            'hp': 15,
+            'value': 7,
+            'color': (255, 165, 0),  # Orange
+            'radius': 10
+        },
+        'tank': {
+            'class': 'TankEnemy',
+            'speed': 70,
+            'hp': 60,
+            'value': 15,
+            'color': (139, 69, 19),  # Saddle brown
+            'radius': 20
+        }
     }
+}
+
+WAVE_CONFIG = {
+    'wave_interval': 5,  # seconds between waves
+    'waves': [
+        {# Wave 1
+            'enemies': [
+                {"count": 5, "type": 'basic', "interval": 1.5},
+                {"count": 8, "type": 'fast', "interval": 1.2},
+                {"count": 10, "type": 'tank', "interval": 1.0},
+            ]
+        },
+        {# Wave 2
+            "enemies": [
+                {"count": 10, "type": 'basic', "interval": 1.0},
+                {"count": 12, "type": 'fast', "interval": 0.8},
+                {"count": 5, "type": 'tank', "interval": 1.5},
+            ]
+        },
+        {# Wave 3
+            "enemies": [
+                {"count": 15, "type": 'basic', "interval": 0.8},
+                {"count": 15, "type": 'fast', "interval": 0.6},
+                {"count": 10, "type": 'tank', "interval": 1.2},
+            ]
+        }
+    ]
 }
 
 TOWER_CONFIG = {

@@ -2,21 +2,23 @@ import pygame
 from .utils import ENEMY_CONFIG
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, path_points):
+    def __init__(self, path_points, enemy_type='basic'):
         super().__init__()
         self.path = path_points
         self.current_wp = 0   # waypoint index
         self.x, self.y = self.path[self.current_wp]
-        self.speed = ENEMY_CONFIG['base_speed']  # pixels per second
-        self.direction = (0, 0)  # Will be set in update
-        self.max_hp = ENEMY_CONFIG['base_hp']
-        self.hp = self.max_hp
-        self.value = ENEMY_CONFIG['base_value']  # money given when killed
-        self.reached_goal = False
 
-        # simple visuals
-        self.color = (230, 70, 70)
-        self.radius = 14
+        # Get stats from config
+        enemy_stats = ENEMY_CONFIG['types'][enemy_type]
+        self.speed = enemy_stats['speed']
+        self.max_hp = enemy_stats['hp']
+        self.hp = self.max_hp
+        self.value = enemy_stats['value']
+        self.color = enemy_stats['color']
+        self.radius = enemy_stats['radius']
+        
+        self.direction = (0, 0)
+        self.reached_goal = False
         
         # Create sprite image and rect
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
@@ -86,27 +88,12 @@ class Enemy(pygame.sprite.Sprite):
 
 class BasicEnemy(Enemy):
     def __init__(self, path_points):
-        super().__init__(path_points)
-        self.speed = ENEMY_CONFIG['basic']['speed']
-        self.max_hp = ENEMY_CONFIG['basic']['hp']
-        self.hp = self.max_hp
-        self.value = ENEMY_CONFIG['basic']['value']
-        self.color = ENEMY_CONFIG['basic']['color']
+        super().__init__(path_points, 'basic')
     
 class FastEnemy(Enemy):
     def __init__(self, path_points):
-        super().__init__(path_points)
-        self.speed = ENEMY_CONFIG['fast']['speed']
-        self.max_hp = ENEMY_CONFIG['fast']['hp']
-        self.hp = self.max_hp
-        self.value = ENEMY_CONFIG['fast']['value']
-        self.color = ENEMY_CONFIG['fast']['color']
+        super().__init__(path_points, 'fast')
 
 class TankEnemy(Enemy):
     def __init__(self, path_points):
-        super().__init__(path_points)
-        self.speed = ENEMY_CONFIG['tank']['speed']
-        self.max_hp = ENEMY_CONFIG['tank']['hp']
-        self.hp = self.max_hp
-        self.value = ENEMY_CONFIG['tank']['value']
-        self.color = ENEMY_CONFIG['tank']['color']
+        super().__init__(path_points, 'tank')
