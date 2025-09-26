@@ -82,6 +82,12 @@ class Game:
                         self.selected_tower_type = name.lower()
                         print(f"Selected tower type: {self.selected_tower_type}")
                         break
+            elif event.button == 3:  # Right click
+                # Check if clicked on a tower
+                for tower in self.towers:
+                    if tower.rect.collidepoint(event.pos):
+                        self.sell_tower(tower)
+                        break
         ''' --- Alternate tower placement ---
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1: # left mouse click
@@ -304,6 +310,15 @@ class Game:
         # Deduct tower cost
         self.money -= new_tower.get_cost()
         print(f"Placed tower at spot {spot_index}. Money left: {self.money}")
+
+    def sell_tower(self, tower):
+        if tower in self.towers:
+            self.money += tower.get_sell_value()
+            self.towers.remove(tower)
+            tower.sell()
+            print(f"Sold tower. Money now: {self.money}")
+        else:
+            print("Tower not found!")
 
     def place_tower_anywhere(self):
         if self.money < Tower.get_cost():

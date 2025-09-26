@@ -91,6 +91,7 @@ WAVE_CONFIG = {
 
 TOWER_CONFIG = {
     'size': 40,
+    'sell_value_pct': 0.5,  # Percentage of cost returned on sell
     'type_count': 3,
     'basic': {
         'cost': 40,

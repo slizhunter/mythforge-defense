@@ -13,6 +13,7 @@ class Tower:
         # Tower stats
         tower_stats = TOWER_CONFIG[tower_type]
         self.size = TOWER_CONFIG['size']
+        self.sell_value_pct = TOWER_CONFIG['sell_value_pct']
         self.range = tower_stats['range']
         self.cost = tower_stats['cost']
         self.fire_rate = tower_stats['fire_rate']
@@ -62,12 +63,6 @@ class Tower:
         distance = center1.distance_to(center2)
         return distance < (self.range + enemy_radius)
     
-    def set_target(self, enemy):
-        self.target = enemy
-
-    def get_target(self):
-        return self.target
-    
     def fire_at(self, enemy):
         new_projectile = Projectile(
             start_pos=(self.x, self.y),
@@ -77,8 +72,21 @@ class Tower:
         )
         self.game.projectiles.add(new_projectile)
 
+    def set_target(self, enemy):
+        self.target = enemy
+
+    def get_target(self):
+        return self.target
+
     def get_cost(self):
         return self.cost
+    
+    def get_sell_value(self):
+        return int(self.cost * self.sell_value_pct)
+    
+    def sell(self):
+        self.target = None
+        self.game = None  # Remove reference to game
 
 class BasicTower(Tower):
     def __init__(self, x_pos, y_pos, tower_rect):
