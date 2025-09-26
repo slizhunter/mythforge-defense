@@ -15,6 +15,23 @@ SCREEN_WIDTH = 1024
 SCREEN_HEIGHT = 768
 FPS = 60
 
+GAME_CONFIG = {
+    'starting_lives': 20,
+    'starting_money': 100,
+    'initial_speed': 1.0,
+    'bg_color': (50, 50, 50),
+    'text_color': (255, 255, 255),
+    'font_size': 36
+}
+
+UI_POSITIONS = {
+    'title': (10, 10),
+    'wave': (700, 10),
+    'money': (500, 10),
+    'lives': (900, 10),
+    'speed': (10, 740)
+}
+
 def distance(pos1, pos2):
     """Calculate distance between two points."""
     return ((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2) ** 0.5
