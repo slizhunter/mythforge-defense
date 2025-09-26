@@ -1,16 +1,17 @@
 import pygame
+from .utils import ENEMY_CONFIG
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, path_points, speed=120, max_hp=20, value = 5):
+    def __init__(self, path_points):
         super().__init__()
         self.path = path_points
         self.current_wp = 0   # waypoint index
         self.x, self.y = self.path[self.current_wp]
-        self.speed = speed  # pixels per second
+        self.speed = ENEMY_CONFIG['base_speed']  # pixels per second
         self.direction = (0, 0)  # Will be set in update
-        self.max_hp = max_hp
-        self.hp = max_hp
-        self.value = value  # money given when killed
+        self.max_hp = ENEMY_CONFIG['base_hp']
+        self.hp = self.max_hp
+        self.value = ENEMY_CONFIG['base_value']  # money given when killed
         self.reached_goal = False
 
         # simple visuals

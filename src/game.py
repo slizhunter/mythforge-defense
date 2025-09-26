@@ -22,6 +22,7 @@ class Game:
 
         # Towers
         self.selected_tower_type = 'basic'
+        self.shop_towers = {}  # Dict with (name, rect) for tower shop options
         self.towers = []
 
         # Enemies
@@ -71,6 +72,11 @@ class Game:
                 for i, rect in enumerate(TOWER_RECTS):
                     if rect.collidepoint(event.pos):
                         self.place_tower(i, self.selected_tower_type)
+                        break
+                for name, rect in self.shop_towers.items():
+                    if rect.collidepoint(event.pos):
+                        self.selected_tower_type = name.lower()
+                        print(f"Selected tower type: {self.selected_tower_type}")
                         break
         ''' --- Alternate tower placement ---
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -128,7 +134,7 @@ class Game:
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     if not tower.get_target():
                         tower.set_target(enemy)
-                        print(f"Enemy{e} in range of tower{t}!")
+                        #print(f"Enemy{e} in range of tower{t}!")
                 else:
                     if tower.get_target() == enemy:
                         tower.set_target(None)
@@ -142,6 +148,7 @@ class Game:
         for projectile, enemies_hit in hits.items():
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)
+                print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
 
     def draw(self):
         # Clear screen
@@ -189,6 +196,7 @@ class Game:
         name_rect = name_txt.get_rect(center=(shop_rect.centerx, top_y + 20))
         self.screen.blit(name_txt, name_rect)
         tower_rect = pygame.Rect(30, name_rect.bottom + 10, size, size)
+        self.shop_towers[name] = tower_rect
         pygame.draw.rect(self.screen, tower_config['color'], tower_rect)
         cost_txt = self.small_font.render(f"${tower_config['cost']}", True, Colors.WHITE)
         cost_rect = cost_txt.get_rect(center=(tower_rect.centerx, tower_rect.top + size//2))

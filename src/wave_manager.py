@@ -48,11 +48,7 @@ class WaveManager:
         self.spawn_timer += dt
         
         if self.spawn_timer >= wave["interval"] and self.enemies_spawned < wave["count"]:
-            new_enemy = Enemy(
-                self.path_points,
-                speed=wave["speed"],
-                max_hp=wave["hp"]
-            )
+            new_enemy = Enemy(self.path_points)
             enemy_list.add(new_enemy)
             self.enemies_spawned += 1
             self.spawn_timer = 0

@@ -15,6 +15,7 @@ class Tower:
         self.range = TOWER_CONFIG['basic']['range']
         self.cost = TOWER_CONFIG['basic']['cost']
         self.fire_rate = TOWER_CONFIG['basic']['fire_rate']  # shots per second
+        self.projectile_speed = 0  # pixels per second
         self.damage = TOWER_CONFIG['basic']['damage']
         self.color = Colors.RED
 
@@ -46,7 +47,7 @@ class Tower:
     def draw(self, screen):
         if self.is_hovered:
             pygame.draw.circle(screen, Colors.GRAY, (self.x, self.y), self.range, 1)
-        pygame.draw.rect(screen, Colors.RED, (self.x - self.size/2, self.y - self.size/2, self.size, self.size))
+        pygame.draw.rect(screen, self.color, (self.x - self.size/2, self.y - self.size/2, self.size, self.size))
 
     def update_hover(self, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
@@ -69,7 +70,9 @@ class Tower:
     def fire_at(self, enemy):
         new_projectile = Projectile(
             start_pos=(self.x, self.y),
-            target_enemy=enemy
+            target_enemy=enemy,
+            speed=self.projectile_speed,
+            damage=self.damage
         )
         self.game.projectiles.add(new_projectile)
 
@@ -83,6 +86,7 @@ class BasicTower(Tower):
         self.cost = TOWER_CONFIG['basic']['cost']
         self.fire_rate = TOWER_CONFIG['basic']['fire_rate']
         self.damage = TOWER_CONFIG['basic']['damage']
+        self.projectile_speed = TOWER_CONFIG['basic']['projectile_speed']
         self.color = TOWER_CONFIG['basic']['color']
 
 class RapidTower(Tower):
@@ -92,6 +96,7 @@ class RapidTower(Tower):
         self.cost = TOWER_CONFIG['rapid']['cost']
         self.fire_rate = TOWER_CONFIG['rapid']['fire_rate']
         self.damage = TOWER_CONFIG['rapid']['damage']
+        self.projectile_speed = TOWER_CONFIG['rapid']['projectile_speed']
         self.color = TOWER_CONFIG['rapid']['color']
 
 class SniperTower(Tower):
@@ -101,4 +106,5 @@ class SniperTower(Tower):
         self.cost = TOWER_CONFIG['sniper']['cost']
         self.fire_rate = TOWER_CONFIG['sniper']['fire_rate']
         self.damage = TOWER_CONFIG['sniper']['damage']
+        self.projectile_speed = TOWER_CONFIG['sniper']['projectile_speed']
         self.color = TOWER_CONFIG['sniper']['color']

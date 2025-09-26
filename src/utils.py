@@ -21,6 +21,13 @@ GAME_CONFIG = {
     'initial_speed': 1.0,
 }
 
+ENEMY_CONFIG = {
+    'spawn_interval': 2.0,  # seconds between spawns
+    'base_speed': 100,      # pixels per second
+    'base_hp': 20,
+    'base_value': 5         # money given when killed
+}
+
 TOWER_CONFIG = {
     'size': 40,
     'type_count': 3,
@@ -29,6 +36,7 @@ TOWER_CONFIG = {
         'range': 150,
         'fire_rate': 1.0,  # shots per second
         'damage': 10,
+        'projectile_speed': 300,
         'color': Colors.RED
     },
     'rapid': {
@@ -36,6 +44,7 @@ TOWER_CONFIG = {
         'range': 120,
         'fire_rate': 3.0,  # shots per second
         'damage': 5,
+        'projectile_speed': 400,
         'color': Colors.BLUE
     },
     'sniper': {
@@ -43,6 +52,7 @@ TOWER_CONFIG = {
         'range': 300,
         'fire_rate': 0.5,  # shots per second
         'damage': 40,
+        'projectile_speed': 500,
         'color': Colors.GREEN
     }
 }
