@@ -83,3 +83,30 @@ class Enemy(pygame.sprite.Sprite):
     
     def get_size(self):
         return self.radius
+
+class BasicEnemy(Enemy):
+    def __init__(self, path_points):
+        super().__init__(path_points)
+        self.speed = ENEMY_CONFIG['basic']['speed']
+        self.max_hp = ENEMY_CONFIG['basic']['hp']
+        self.hp = self.max_hp
+        self.value = ENEMY_CONFIG['basic']['value']
+        self.color = ENEMY_CONFIG['basic']['color']
+    
+class FastEnemy(Enemy):
+    def __init__(self, path_points):
+        super().__init__(path_points)
+        self.speed = ENEMY_CONFIG['fast']['speed']
+        self.max_hp = ENEMY_CONFIG['fast']['hp']
+        self.hp = self.max_hp
+        self.value = ENEMY_CONFIG['fast']['value']
+        self.color = ENEMY_CONFIG['fast']['color']
+
+class TankEnemy(Enemy):
+    def __init__(self, path_points):
+        super().__init__(path_points)
+        self.speed = ENEMY_CONFIG['tank']['speed']
+        self.max_hp = ENEMY_CONFIG['tank']['hp']
+        self.hp = self.max_hp
+        self.value = ENEMY_CONFIG['tank']['value']
+        self.color = ENEMY_CONFIG['tank']['color']

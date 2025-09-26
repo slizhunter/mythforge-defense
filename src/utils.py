@@ -25,7 +25,25 @@ ENEMY_CONFIG = {
     'spawn_interval': 2.0,  # seconds between spawns
     'base_speed': 100,      # pixels per second
     'base_hp': 20,
-    'base_value': 5         # money given when killed
+    'base_value': 5,         # money given when killed
+    'basic': {
+        'speed': 100,
+        'hp': 20,
+        'value': 5,
+        'color': (70, 130, 180)  # Steel blue
+    },
+    'fast': {
+        'speed': 150,
+        'hp': 15,
+        'value': 7,
+        'color': (255, 165, 0)  # Orange
+    },
+    'tank': {
+        'speed': 70,
+        'hp': 50,
+        'value': 15,
+        'color': (139, 69, 19)  # Saddle brown
+    }
 }
 
 TOWER_CONFIG = {

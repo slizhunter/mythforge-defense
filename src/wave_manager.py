@@ -1,5 +1,5 @@
 import pygame
-from .enemy import Enemy
+from .enemy import Enemy, BasicEnemy, FastEnemy, TankEnemy
 
 class WaveManager:
     def __init__(self, path_points):
@@ -13,9 +13,9 @@ class WaveManager:
 
         # Define waves as lists of enemy types
         self.waves = [
-            {"count": 5, "interval": 1.5, "hp": 20, "speed": 120},  # Wave 1
-            {"count": 8, "interval": 1.2, "hp": 25, "speed": 130},  # Wave 2
-            {"count": 10, "interval": 1.0, "hp": 30, "speed": 140}, # Wave 3
+            {"count": 5, "type": 'basic', "interval": 1.5, "hp": 20, "speed": 120},  # Wave 1
+            {"count": 8, "type": 'fast', "interval": 1.2, "hp": 25, "speed": 130},  # Wave 2
+            {"count": 10, "type": 'tank', "interval": 1.0, "hp": 30, "speed": 140}, # Wave 3
             # Add more waves as needed
         ]
 
@@ -48,7 +48,12 @@ class WaveManager:
         self.spawn_timer += dt
         
         if self.spawn_timer >= wave["interval"] and self.enemies_spawned < wave["count"]:
-            new_enemy = Enemy(self.path_points)
+            if wave["type"] == 'basic':
+                new_enemy = BasicEnemy(self.path_points)
+            elif wave["type"] == 'fast':
+                new_enemy = FastEnemy(self.path_points)
+            elif wave["type"] == 'tank':
+                new_enemy = TankEnemy(self.path_points)
             enemy_list.add(new_enemy)
             self.enemies_spawned += 1
             self.spawn_timer = 0

@@ -42,3 +42,4 @@ class Projectile(pygame.sprite.Sprite):
         if (self.pos.y < 0 or self.pos.y > SCREEN_HEIGHT or 
             self.pos.x < 0 or self.pos.x > SCREEN_WIDTH):
             self.kill()
+            print("Projectile went off-screen and was removed.")
