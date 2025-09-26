@@ -1,13 +1,18 @@
 import pygame
 import math
 from .enemy import Enemy
+from .utils import SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_enemy, speed=400, damage=10):
         super().__init__()
-        self.image = pygame.Surface((4, 4))
+        size = 6  # Slightly larger for better hit detection
+        self.image = pygame.Surface((size, size))
         self.image.fill((255, 255, 0))  # Yellow projectile
+        # Center the rect on the projectile's position
         self.rect = self.image.get_rect(center=start_pos)
+        # Make collision rect slightly larger than visual
+        self.rect.inflate_ip(2, 2)  # Add 2 pixels to each side
         
         # Movement variables
         self.pos = pygame.math.Vector2(start_pos)
@@ -19,7 +24,7 @@ class Projectile(pygame.sprite.Sprite):
             enemy_pos.x + target_enemy.speed * time_to_target * target_enemy.direction[0],
             enemy_pos.y + target_enemy.speed * time_to_target * target_enemy.direction[1]
         )
-        
+
         self.target = future_pos
         self.direction = (self.target - self.pos).normalize()
         self.speed = speed
@@ -33,6 +38,7 @@ class Projectile(pygame.sprite.Sprite):
         self.pos += movement
         self.rect.center = self.pos
         
-        # Check if projectile has reached or passed target
-        if (self.target - self.pos).length() <= self.speed * dt:
+        # Check if projectile has gone off-screen
+        if (self.pos.y < 0 or self.pos.y > SCREEN_HEIGHT or 
+            self.pos.x < 0 or self.pos.x > SCREEN_WIDTH):
             self.kill()

@@ -142,9 +142,18 @@ class Game:
     def _update_projectiles(self, dt):
         # Update projectiles
         self.projectiles.update(dt)
+
+        # Convert enemies to sprite group if not already
+        enemy_sprites = pygame.sprite.Group(self.enemies)
         
         # Check projectile collisions with enemies
-        hits = pygame.sprite.groupcollide(self.projectiles, self.enemies, True, False)
+        hits = pygame.sprite.groupcollide(
+            self.projectiles, 
+            enemy_sprites, 
+            True,  # Destroy projectile on hit
+            False, # Do not destroy enemy on hit
+            pygame.sprite.collide_rect
+        )
         for projectile, enemies_hit in hits.items():
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)
