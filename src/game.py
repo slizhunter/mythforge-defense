@@ -159,6 +159,7 @@ class Game:
     
     def draw_playing(self):
         self._draw_game_world()
+        self._draw_tower_selection()
         self._draw_towers()
         draw_path(self.screen, PATH_POINTS)
         self._draw_enemies()
@@ -171,38 +172,28 @@ class Game:
         title_txt = self.large_font.render("Myth-Forge Defense", True, self.text_color)
         self.screen.blit(title_txt, UI_POSITIONS["title"])
 
+    def _draw_tower_selection(self):
         # --- draw tower selection ---
+        size = TOWER_CONFIG['size']
         # Draw tower shop area rectangle
-        shop_rect = pygame.Rect(10, 200, TOWER_CONFIG['size'] * 2, TOWER_CONFIG['size'] * 7)  # x, y, width, height
+        shop_rect = pygame.Rect(10, 200, size * 2, size * TOWER_CONFIG['type_count'] * 2.5)  # x, y, width, height
         pygame.draw.rect(self.screen, Colors.BLACK, shop_rect, 2)  # 2 is border thickness
-        # Draw basic tower option
-        basic_name_txt = self.medium_font.render("Basic", True, Colors.WHITE)
-        basic_name_rect = basic_name_txt.get_rect(center=(shop_rect.centerx, shop_rect.top + 20))
-        self.screen.blit(basic_name_txt, basic_name_rect)
-        basic_tower_rect = pygame.Rect(30, basic_name_rect.bottom + 10, TOWER_CONFIG['size'], TOWER_CONFIG['size'])
-        pygame.draw.rect(self.screen, TOWER_CONFIG['basic']['color'], basic_tower_rect)
-        basic_cost_txt = self.small_font.render(f"${TOWER_CONFIG['basic']['cost']}", True, Colors.WHITE)
-        basic_cost_rect = basic_cost_txt.get_rect(center=(basic_tower_rect.centerx, basic_tower_rect.top + TOWER_CONFIG['size']//2))
-        self.screen.blit(basic_cost_txt, basic_cost_rect)
-        # Draw rapid tower option
-        rapid_name_txt = self.medium_font.render("Rapid", True, Colors.WHITE)
-        rapid_name_rect = rapid_name_txt.get_rect(center=(shop_rect.centerx, basic_tower_rect.bottom + 20))
-        self.screen.blit(rapid_name_txt, rapid_name_rect)
-        rapid_tower_rect = pygame.Rect(30, rapid_name_rect.bottom + 10, TOWER_CONFIG['size'], TOWER_CONFIG['size'])
-        pygame.draw.rect(self.screen, TOWER_CONFIG['rapid']['color'], rapid_tower_rect)
-        rapid_cost_txt = self.small_font.render(f"${TOWER_CONFIG['rapid']['cost']}", True, Colors.WHITE)
-        rapid_cost_rect = rapid_cost_txt.get_rect(center=(rapid_tower_rect.centerx, rapid_tower_rect.top + TOWER_CONFIG['size']//2))
-        self.screen.blit(rapid_cost_txt, rapid_cost_rect)
-        # Draw sniper tower option
-        sniper_name_txt = self.medium_font.render("Sniper", True, Colors.WHITE)
-        sniper_name_rect = sniper_name_txt.get_rect(center=(shop_rect.centerx, rapid_tower_rect.bottom + 20))
-        self.screen.blit(sniper_name_txt, sniper_name_rect)
-        sniper_tower_rect = pygame.Rect(30, sniper_name_rect.bottom + 10, TOWER_CONFIG['size'], TOWER_CONFIG['size'])
-        pygame.draw.rect(self.screen, TOWER_CONFIG['sniper']['color'], sniper_tower_rect)
-        cost_txt = self.small_font.render(f"${TOWER_CONFIG['sniper']['cost']}", True, Colors.WHITE)
-        cost_rect = cost_txt.get_rect(center=(sniper_tower_rect.centerx, sniper_tower_rect.top + TOWER_CONFIG['size']//2))
-        self.screen.blit(cost_txt, cost_rect)
+        # Draw tower options
+        next_tower = self.__draw_tower_option("Basic", shop_rect, TOWER_CONFIG['basic'], shop_rect.top)
+        next_tower = self.__draw_tower_option("Rapid", shop_rect, TOWER_CONFIG['rapid'], next_tower)
+        next_tower = self.__draw_tower_option("Sniper", shop_rect, TOWER_CONFIG['sniper'], next_tower)
 
+    def __draw_tower_option(self, name, shop_rect, tower_config, top_y):
+        size = TOWER_CONFIG['size']
+        name_txt = self.medium_font.render(name, True, Colors.WHITE)
+        name_rect = name_txt.get_rect(center=(shop_rect.centerx, top_y + 20))
+        self.screen.blit(name_txt, name_rect)
+        tower_rect = pygame.Rect(30, name_rect.bottom + 10, size, size)
+        pygame.draw.rect(self.screen, tower_config['color'], tower_rect)
+        cost_txt = self.small_font.render(f"${tower_config['cost']}", True, Colors.WHITE)
+        cost_rect = cost_txt.get_rect(center=(tower_rect.centerx, tower_rect.top + size//2))
+        self.screen.blit(cost_txt, cost_rect)
+        return tower_rect.bottom + 10  # Return bottom y for next option
 
     def _draw_towers(self):
         # --- tower placement ---

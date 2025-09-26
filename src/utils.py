@@ -23,6 +23,7 @@ GAME_CONFIG = {
 
 TOWER_CONFIG = {
     'size': 40,
+    'type_count': 3,
     'basic': {
         'cost': 20,
         'range': 150,
