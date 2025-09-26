@@ -19,9 +19,39 @@ GAME_CONFIG = {
     'starting_lives': 20,
     'starting_money': 100,
     'initial_speed': 1.0,
+}
+
+TOWER_CONFIG = {
+    'size': 40,
+    'basic': {
+        'cost': 20,
+        'range': 150,
+        'fire_rate': 1.0,  # shots per second
+        'damage': 10,
+        'color': Colors.RED
+    },
+    'rapid': {
+        'cost': 30,
+        'range': 120,
+        'fire_rate': 3.0,  # shots per second
+        'damage': 5,
+        'color': Colors.BLUE
+    },
+    'sniper': {
+        'cost': 50,
+        'range': 300,
+        'fire_rate': 0.5,  # shots per second
+        'damage': 40,
+        'color': Colors.GREEN
+    }
+}
+
+UI_CONFIG = {
     'bg_color': (50, 50, 50),
     'text_color': (255, 255, 255),
-    'font_size': 36
+    'font_size_large': 36,
+    'font_size_medium': 24,
+    'font_size_small': 18
 }
 
 UI_POSITIONS = {

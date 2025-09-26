@@ -1,21 +1,29 @@
 import pygame
-from .utils import Colors
+from .utils import Colors, TOWER_CONFIG
 from .map import TOWER_RECTS
 from .projectile import Projectile
 
 class Tower:
-    COST = 20
-
-    def __init__(self, x_pos, y_pos, tower_size, tower_range, tower_rect, fire_rate=2):
+    def __init__(self, x_pos, y_pos, tower_rect):
+        # Tower position
         self.x = x_pos
         self.y = y_pos
-        self.size = tower_size
-        self.range = tower_range
-        self.fire_rate = fire_rate
-        self.fire_timer = 0 # Time since last shot
-        self.game = None  # Will be set when tower is added to the game
         self.rect = tower_rect
+
+        # Tower stats
+        self.size = TOWER_CONFIG['size']
+        self.range = TOWER_CONFIG['basic']['range']
+        self.cost = TOWER_CONFIG['basic']['cost']
+        self.fire_rate = TOWER_CONFIG['basic']['fire_rate']  # shots per second
+        self.damage = TOWER_CONFIG['basic']['damage']
+        self.color = Colors.RED
+
+        # Combat variables
+        self.fire_timer = 0 # Time since last shot
         self.target = None
+
+        # Tower management
+        self.game = None  # Will be set when tower is added to the game
         self.is_hovered = False
     
     def update(self, dt):
@@ -65,6 +73,32 @@ class Tower:
         )
         self.game.projectiles.add(new_projectile)
 
-    @classmethod
-    def get_cost(cls):
-        return cls.COST
+    def get_cost(self):
+        return self.cost
+
+class BasicTower(Tower):
+    def __init__(self, x_pos, y_pos, tower_rect):
+        super().__init__(x_pos, y_pos, tower_rect)
+        self.range = TOWER_CONFIG['basic']['range']
+        self.cost = TOWER_CONFIG['basic']['cost']
+        self.fire_rate = TOWER_CONFIG['basic']['fire_rate']
+        self.damage = TOWER_CONFIG['basic']['damage']
+        self.color = TOWER_CONFIG['basic']['color']
+
+class RapidTower(Tower):
+    def __init__(self, x_pos, y_pos, tower_rect):
+        super().__init__(x_pos, y_pos, tower_rect)
+        self.range = TOWER_CONFIG['rapid']['range']
+        self.cost = TOWER_CONFIG['rapid']['cost']
+        self.fire_rate = TOWER_CONFIG['rapid']['fire_rate']
+        self.damage = TOWER_CONFIG['rapid']['damage']
+        self.color = TOWER_CONFIG['rapid']['color']
+
+class SniperTower(Tower):
+    def __init__(self, x_pos, y_pos, tower_rect):
+        super().__init__(x_pos, y_pos, tower_rect)
+        self.range = TOWER_CONFIG['sniper']['range']
+        self.cost = TOWER_CONFIG['sniper']['cost']
+        self.fire_rate = TOWER_CONFIG['sniper']['fire_rate']
+        self.damage = TOWER_CONFIG['sniper']['damage']
+        self.color = TOWER_CONFIG['sniper']['color']
