@@ -54,6 +54,19 @@ class Enemy(pygame.sprite.Sprite):
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius)
 
+        # Draw health bar
+        health_pct = self.hp / self.max_hp
+        bar_width = self.radius * 2
+        bar_height = 4
+        bar_pos = (int(self.x - self.radius), int(self.y - self.radius - 8))
+        
+        # Background (red)
+        pygame.draw.rect(surface, (255,0,0), 
+            (bar_pos[0], bar_pos[1], bar_width, bar_height))
+        # Foreground (green)
+        pygame.draw.rect(surface, (0,255,0), 
+            (bar_pos[0], bar_pos[1], int(bar_width * health_pct), bar_height))
+
     def take_damage(self, amount):
         self.hp -= amount
         if self.hp < 0:
