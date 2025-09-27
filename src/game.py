@@ -1,7 +1,13 @@
 import pygame, random
 import time
 from .enemy import Enemy
-from .map import PATH_POINTS, TOWER_POINTS, TOWER_RECTS, draw_path, draw_tower_spots
+from .map import (PATH_POINTS, 
+                  TOWER_POINTS, 
+                  TOWER_RECTS, 
+                  draw_path, 
+                  draw_tower_spots, 
+                  draw_spawn_point,
+                  draw_end_point)
 from .tower import Tower, BasicTower, RapidTower, SniperTower
 from .projectile import Projectile
 from .wave_manager import WaveManager
@@ -189,6 +195,8 @@ class Game:
         self._draw_towers()
         draw_path(self.screen, PATH_POINTS)
         self._draw_enemies()
+        draw_spawn_point(self.screen, PATH_POINTS)
+        draw_end_point(self.screen, PATH_POINTS)
         self.projectiles.draw(self.screen)
         self._draw_wave_info()
         self._draw_ui_stats()
@@ -227,7 +235,13 @@ class Game:
         draw_tower_spots(self.screen, TOWER_POINTS)
         mouse_pos = pygame.mouse.get_pos()
 
-            # Draw range preview on hover
+        self.__draw_tower_range_preview(mouse_pos)
+        for tower in self.towers:
+            tower.update_hover(mouse_pos)
+            tower.draw(self.screen)
+    
+    def __draw_tower_range_preview(self, mouse_pos):
+        # Draw range preview on hover
         for i, rect in enumerate(TOWER_RECTS):
             if rect.collidepoint(mouse_pos):
                 # Only show preview if spot is empty
@@ -260,10 +274,6 @@ class Game:
                     self.screen.blit(range_surface, (0, 0))
                 break
 
-        for tower in self.towers:
-            tower.update_hover(mouse_pos)
-            tower.draw(self.screen)
-    
     def _draw_enemies(self):
         for enemy in self.enemies:
             enemy.draw(self.screen)

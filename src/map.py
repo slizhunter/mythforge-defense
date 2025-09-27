@@ -46,6 +46,18 @@ def draw_path(screen, path_points):
         # Lighter inner circle
         pygame.draw.circle(screen, (140, 140, 35), pt, 20)
 
+def draw_spawn_point(screen, path_points):
+    if path_points:
+        spawn_pos = path_points[0]
+        pygame.draw.circle(screen, Colors.GREEN, spawn_pos, 40)
+        pygame.draw.circle(screen, Colors.DARK_GREEN, spawn_pos, 40, 2)
+
+def draw_end_point(screen, path_points):
+    if path_points:
+        end_pos = path_points[-1]
+        pygame.draw.circle(screen, Colors.RED, end_pos, 40)
+        pygame.draw.circle(screen, Colors.DARK_RED, end_pos, 40, 2)
+
 def draw_tower_spots(screen, tower_points):
     for spot in tower_points:
         pygame.draw.rect(screen, (200,200,50), spot, 1)
