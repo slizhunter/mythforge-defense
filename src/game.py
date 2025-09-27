@@ -226,6 +226,40 @@ class Game:
         # --- tower placement ---
         draw_tower_spots(self.screen, TOWER_POINTS)
         mouse_pos = pygame.mouse.get_pos()
+
+            # Draw range preview on hover
+        for i, rect in enumerate(TOWER_RECTS):
+            if rect.collidepoint(mouse_pos):
+                # Only show preview if spot is empty
+                spot_empty = True
+                for tower in self.towers:
+                    if rect.collidepoint(tower.x, tower.y):
+                        spot_empty = False
+                        break
+                        
+                if spot_empty:
+                    tower_config = TOWER_CONFIG[self.selected_tower_type]
+                    # Draw range circle
+                    x = rect.centerx
+                    y = rect.centery
+                    pygame.draw.circle(
+                        self.screen, 
+                        tower_config['color'], 
+                        (x, y), 
+                        tower_config['range'],
+                        1  # Line width
+                    )
+                    # Add semi-transparent fill
+                    range_surface = pygame.Surface((self.screen_width, self.screen_height), pygame.SRCALPHA)
+                    pygame.draw.circle(
+                        range_surface,
+                        (*tower_config['color'], 30),  # Add alpha value
+                        (x, y),
+                        tower_config['range']
+                    )
+                    self.screen.blit(range_surface, (0, 0))
+                break
+
         for tower in self.towers:
             tower.update_hover(mouse_pos)
             tower.draw(self.screen)

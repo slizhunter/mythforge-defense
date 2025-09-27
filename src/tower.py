@@ -48,7 +48,7 @@ class Tower:
 
     def draw(self, screen):
         if self.is_hovered:
-            pygame.draw.circle(screen, Colors.GRAY, (self.x, self.y), self.range, 1)
+            pygame.draw.circle(screen, Colors.GRAY, (self.x, self.y), self.range, 1) # show range on hover
         pygame.draw.rect(screen, self.color, (self.x - self.size/2, self.y - self.size/2, self.size, self.size))
 
     def update_hover(self, mouse_pos):
