@@ -67,8 +67,7 @@ class Tower:
         new_projectile = Projectile(
             start_pos=(self.x, self.y),
             target_enemy=enemy,
-            speed=self.projectile_speed,
-            damage=self.damage
+            projectile_type='single'  # For now, all towers use single projectiles
         )
         self.game.projectiles.add(new_projectile)
 

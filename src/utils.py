@@ -15,6 +15,7 @@ class Colors:
     ORANGE = (255, 165, 0)
     PURPLE = (160, 32, 240)
     BROWN = (139, 69, 19)
+    CYAN = (0, 255, 255)
 
 # Game settings
 SCREEN_WIDTH = 1024
@@ -36,24 +37,24 @@ ENEMY_CONFIG = {
         'basic': {
             'class': 'BasicEnemy',
             'speed': 100,
-            'hp': 20,
-            'value': 5,
+            'hp': 25,
+            'value': 1,
             'color': (70, 130, 180),  # Steel blue
             'radius': 14
         },
         'fast': {
             'class': 'FastEnemy',
-            'speed': 200,
+            'speed': 250,
             'hp': 15,
-            'value': 7,
+            'value': 2,
             'color': (255, 165, 0),  # Orange
             'radius': 10
         },
         'tank': {
             'class': 'TankEnemy',
             'speed': 70,
-            'hp': 60,
-            'value': 15,
+            'hp': 100,
+            'value': 5,
             'color': (139, 69, 19),  # Saddle brown
             'radius': 20
         }
@@ -87,7 +88,7 @@ WAVE_CONFIG = {
         {# Wave 4
             "groups": [
                 {"count": 15, "type": 'fast', "interval": 0.8},
-                {"count": 15, "type": 'basic', "interval": 0.6},
+                {"count": 30, "type": 'basic', "interval": 0.3},
                 {"count": 10, "type": 'tank', "interval": 1.2},
                 {"count": 20, "type": 'fast', "interval": 0.8}
             ]
@@ -96,7 +97,7 @@ WAVE_CONFIG = {
 }
 
 TOWER_CONFIG = {
-    'size': 40,
+    'size': 50,
     'sell_value_pct': 0.5,  # Percentage of cost returned on sell
     'type_count': 3,
     'basic': {
@@ -105,15 +106,17 @@ TOWER_CONFIG = {
         'fire_rate': 1.0,  # shots per second
         'damage': 10,
         'projectile_speed': 300,
+        'projectile_type': 'single',
         'color': Colors.RED
     },
     'rapid': {
         'cost': 60,
         'range': 120,
         'fire_rate': 3.0,  # shots per second
-        'damage': 5,
+        'damage': 3,
         'projectile_speed': 400,
-        'color': Colors.BLUE
+        'projectile_type': 'single',
+        'color': Colors.PURPLE
     },
     'sniper': {
         'cost': 100,
@@ -121,7 +124,49 @@ TOWER_CONFIG = {
         'fire_rate': 0.5,  # shots per second
         'damage': 40,
         'projectile_speed': 500,
+        'projectile_type': 'single',
         'color': Colors.GREEN
+    },
+    'cannon': {
+        'cost': 80,
+        'range': 180,
+        'fire_rate': 0.8,  # shots per second
+        'damage': 25,
+        'projectile_speed': 250,
+        'projectile_type': 'shell',
+        'color': Colors.ORANGE
+    },
+    'gear_assembly': {
+        'cost': 120,
+        'range': 200,
+        'fire_rate': 1.5,  # shots per second
+        'damage': 0,
+        'projectile_speed': 0,
+        'projectile_type': 'slow',
+        'color': Colors.BLUE
+    }
+}
+
+PROJECTILE_CONFIG = {
+    'single': {
+        'speed': 400,
+        'damage': 10,
+        'color': Colors.YELLOW,
+        'size': 6
+    },
+    'shell': {
+        'speed': 300,
+        'damage': 20,
+        'color': Colors.BROWN,
+        'size': 8
+    },
+    'slow': {
+        'speed': 200,
+        'damage': 0,
+        'color': Colors.CYAN,
+        'size': 10,
+        'slow_effect': 0.5,  # slows enemy to 50% speed
+        'duration': 2.0      # effect lasts for 2 seconds
     }
 }
 
@@ -135,10 +180,11 @@ UI_CONFIG = {
 
 UI_POSITIONS = {
     'title': (10, 10),
-    'wave': (700, 10),
-    'money': (500, 10),
-    'lives': (900, 10),
-    'speed': (10, 740)
+    'wave': (SCREEN_WIDTH//2 - 50, 10),
+    'money': (SCREEN_WIDTH - 300, 10),
+    'lives': (SCREEN_WIDTH - 125, 10),
+    'speed': (10, SCREEN_HEIGHT - 40),
+    'wave_timer': (SCREEN_WIDTH//2 - 100, 50)
 }
 
 def distance(pos1, pos2):

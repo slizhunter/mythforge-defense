@@ -59,9 +59,9 @@ class WaveManager:
             
         # Move to next enemy type if current one is done
         if self.remaining_spawns <= 0:
-            print(f"Finished spawning group {self.current_enemy_group + 1} of wave {self.current_wave + 1}")
+            #print(f"Finished spawning group {self.current_enemy_group + 1} of wave {self.current_wave + 1}")
             if self.current_enemy_group + 1 < len(groups):
-                print(f"Preparing to spawn group {self.current_enemy_group + 2} of wave {self.current_wave + 1}")
+                #print(f"Preparing to spawn group {self.current_enemy_group + 2} of wave {self.current_wave + 1}")
                 self.current_enemy_group += 1
                 self.remaining_spawns = groups[self.current_enemy_group]["count"]
                 self.spawn_timer = 0 # Reset spawn timer for next group

@@ -1,5 +1,5 @@
 import pygame
-from .utils import Colors
+from .utils import Colors, TOWER_CONFIG
 
 # A simple zig-zag path for demo
 PATH_POINTS = [
@@ -11,25 +11,57 @@ PATH_POINTS = [
     (950, 650)
 ]
 
+size = TOWER_CONFIG['size']
+
 # Tower placement spots (x, y, width, height)
 TOWER_POINTS = [
-    # Top section
-    (250, 150, 40, 40),   # Below first horizontal path
-    (350, 150, 40, 40),
+    # Below path
+    (150, 150, size, size),
+    (200, 150, size, size),
+    (250, 150, size, size),   
+    (300, 150, size, size),
+    (350, 150, size, size),
+
+    (350, 200, size, size),  
+    (350, 250, size, size),
+    (350, 300, size, size),
+    (350, 350, size, size),
+    (350, 400, size, size),
+    (350, 450, size, size),
+
+    (400, 450, size, size),
+    (450, 450, size, size),
+    (500, 450, size, size),
+    (550, 450, size, size),
+    (600, 450, size, size),
+
+    (600, 500, size, size),
+    (600, 550, size, size),
+    (600, 600, size, size),
+    (600, 650, size, size),
     
-    # Middle section near first turn
-    (500, 150, 40, 40),  # Right of first vertical path
-    (500, 250, 40, 40),
+    #Above path
+    (500, 100, size, size),
+    (500, 150, size, size),
+    (500, 200, size, size),
+    (500, 250, size, size),
+    (500, 300, size, size),
+
+    (550, 300, size, size),
+    (600, 300, size, size),
+    (650, 300, size, size),
+    (700, 300, size, size),
+    (750, 300, size, size),
+
+    (750, 350, size, size),
+    (750, 400, size, size),
+    (750, 450, size, size),
+    (750, 500, size, size),
+    (750, 550, size, size),
+
+    (800, 550, size, size),
+    (850, 550, size, size),
     
-    # Middle section
-    (300, 350, 40, 40),  # Left of second horizontal path
-    (300, 250, 40, 40),
-    
-    # Bottom section
-    (500, 500, 40, 40),  # Between paths
-    (600, 550, 40, 40),
-    (800, 550, 40, 40),  # Near end of path
-    (850, 500, 40, 40)
 ]
 
 TOWER_RECTS = [pygame.Rect(spot) for spot in TOWER_POINTS]
