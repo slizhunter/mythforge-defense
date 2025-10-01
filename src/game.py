@@ -1,6 +1,4 @@
-import pygame, random
-import time
-from .enemy import Enemy
+import pygame
 from .map import (PATH_POINTS, 
                   TOWER_POINTS, 
                   TOWER_RECTS, 
@@ -9,7 +7,6 @@ from .map import (PATH_POINTS,
                   draw_spawn_point,
                   draw_end_point)
 from .tower import Tower, BasicTower, RapidTower, SniperTower
-from .projectile import Projectile
 from .wave_manager import WaveManager
 from .utils import Colors, GAME_CONFIG, TOWER_CONFIG, UI_CONFIG, UI_POSITIONS
 

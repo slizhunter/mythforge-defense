@@ -63,6 +63,10 @@ ENEMY_CONFIG = {
 
 WAVE_CONFIG = {
     'wave_interval': 5,  # seconds between waves
+    'completion_bonus': {
+        'base': 20,          # Base bonus for completing a wave
+        'increment': 10,     # Additional bonus per wave
+    },
     'waves': [
         {# Wave 1
             'groups': [
@@ -104,35 +108,28 @@ TOWER_CONFIG = {
         'cost': 40,
         'range': 150,
         'fire_rate': 1.0,  # shots per second
-        'damage': 10,
         'projectile_speed': 300,
-        'projectile_type': 'single',
+        'projectile_type': 'regular',
         'color': Colors.RED
     },
     'rapid': {
         'cost': 60,
         'range': 120,
         'fire_rate': 3.0,  # shots per second
-        'damage': 3,
-        'projectile_speed': 400,
-        'projectile_type': 'single',
+        'projectile_type': 'rapid',
         'color': Colors.PURPLE
     },
     'sniper': {
         'cost': 100,
         'range': 300,
         'fire_rate': 0.5,  # shots per second
-        'damage': 40,
-        'projectile_speed': 500,
-        'projectile_type': 'single',
+        'projectile_type': 'sniper',
         'color': Colors.GREEN
     },
     'cannon': {
         'cost': 80,
         'range': 180,
         'fire_rate': 0.8,  # shots per second
-        'damage': 25,
-        'projectile_speed': 250,
         'projectile_type': 'shell',
         'color': Colors.ORANGE
     },
@@ -140,19 +137,29 @@ TOWER_CONFIG = {
         'cost': 120,
         'range': 200,
         'fire_rate': 1.5,  # shots per second
-        'damage': 0,
-        'projectile_speed': 0,
         'projectile_type': 'slow',
         'color': Colors.BLUE
     }
 }
 
 PROJECTILE_CONFIG = {
-    'single': {
+    'regular': {
         'speed': 400,
-        'damage': 10,
+        'damage': 20,
         'color': Colors.YELLOW,
         'size': 6
+    },
+    'rapid': {
+        'speed': 600,
+        'damage': 7,
+        'color': Colors.PURPLE,
+        'size': 5
+    },
+    'sniper': {
+        'speed': 700,
+        'damage': 20,
+        'color': Colors.GREEN,
+        'size': 7
     },
     'shell': {
         'speed': 300,

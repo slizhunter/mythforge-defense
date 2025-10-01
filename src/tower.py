@@ -1,6 +1,5 @@
 import pygame
 from .utils import Colors, TOWER_CONFIG
-from .map import TOWER_RECTS
 from .projectile import Projectile
 
 class Tower:
@@ -17,8 +16,7 @@ class Tower:
         self.range = tower_stats['range']
         self.cost = tower_stats['cost']
         self.fire_rate = tower_stats['fire_rate']
-        self.damage = tower_stats['damage']
-        self.projectile_speed = tower_stats['projectile_speed']
+        self.projectile_type = tower_stats['projectile_type']
         self.color = tower_stats['color']
 
         # Combat variables
@@ -67,7 +65,7 @@ class Tower:
         new_projectile = Projectile(
             start_pos=(self.x, self.y),
             target_enemy=enemy,
-            projectile_type='single'  # For now, all towers use single projectiles
+            projectile_type=self.projectile_type
         )
         self.game.projectiles.add(new_projectile)
 

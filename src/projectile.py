@@ -1,10 +1,8 @@
 import pygame
-import math
-from .enemy import Enemy
 from .utils import SCREEN_HEIGHT, SCREEN_WIDTH, PROJECTILE_CONFIG
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target_enemy, projectile_type='single'):
+    def __init__(self, start_pos, target_enemy, projectile_type='regular'):
         super().__init__()
         # Get stats from config
         projectile_stats = PROJECTILE_CONFIG[projectile_type]
@@ -46,10 +44,20 @@ class Projectile(pygame.sprite.Sprite):
             self.kill()
             print("Projectile went off-screen and was removed.")
 
-class SingleTarget(Projectile):
+class Regular(Projectile):
     def __init__(self, start_pos, target_enemy):
-        super().__init__(start_pos, target_enemy, 'single')
-        # Single target specific initialization if needed
+        super().__init__(start_pos, target_enemy, 'regular')
+        # Regular target specific initialization if needed
+
+class Rapid(Projectile):
+    def __init__(self, start_pos, target_enemy):
+        super().__init__(start_pos, target_enemy, 'rapid')
+        # Rapid specific initialization if needed
+
+class Sniper(Projectile):
+    def __init__(self, start_pos, target_enemy):
+        super().__init__(start_pos, target_enemy, 'sniper')
+        # Sniper specific initialization if needed
 
 class Shell(Projectile):
     def __init__(self, start_pos, target_enemy):

@@ -1,6 +1,6 @@
 import pygame
 from .enemy import BasicEnemy, FastEnemy, TankEnemy
-from .utils import WAVE_CONFIG, ENEMY_CONFIG
+from .utils import WAVE_CONFIG, ENEMY_CONFIG, GAME_CONFIG
 
 class WaveManager:
     def __init__(self, path_points):
