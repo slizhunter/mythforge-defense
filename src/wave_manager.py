@@ -23,21 +23,39 @@ class WaveManager:
             self.ENEMY_TYPES[enemy_type] = enemy_class
 
     def update(self, dt, enemy_list):
-        # Don't continue if we've completed all waves
-        if self.current_wave >= len(self.waves) - 1 and not self.wave_in_progress:
-            print("All waves completed!")
-            return
+        # Check for game completion
+        if self._is_game_completed():
+                return
         
-        if not self.wave_in_progress:                   # Between waves
-            self.wave_timer += dt                       # Increment break timer
-            if self.wave_timer >= self.wave_interval:   # Time for next wave?
-                self._start_next_wave()                 # Start it
-            return
+        # Handle between-wave break
+        if not self.wave_in_progress:
+            return self._handle_wave_break(dt)
             
         wave = self.waves[self.current_wave]            # Current wave details
         groups = wave["groups"]
 
-        # Check if we've finished all enemy groups in this wave
+        # Check for wave completion
+        if self._is_wave_completed(groups, enemy_list):
+            return
+
+        # Handle enemy spawning
+        self._handle_enemy_spawning(dt, groups, enemy_list)
+
+    def _is_game_completed(self):
+        """Check if all waves are done"""
+        if self.current_wave >= len(self.waves) - 1 and not self.wave_in_progress:
+            print("All waves completed!")
+            return True
+        return False
+    
+    def _handle_wave_break(self, dt):
+        """Handle time between waves"""
+        self.wave_timer += dt
+        if self.wave_timer >= self.wave_interval:
+            self._start_next_wave()
+        
+    def _is_wave_completed(self, groups, enemy_list):
+        """Check if current wave is finished"""
         if (self.current_enemy_group >= len(groups) and 
             self.remaining_spawns <= 0 and 
             len(enemy_list) == 0):
@@ -45,8 +63,11 @@ class WaveManager:
             self.wave_in_progress = False
             self.wave_timer = 0
             self.current_enemy_group = 0
-            return
-
+            return True
+        return False
+    
+    def _handle_enemy_spawning(self, dt, groups, enemy_list):
+        """Handle enemy spawning and group progression"""
         current_group = groups[self.current_enemy_group]
         self.spawn_timer += dt                          # Increment spawn timer
         
@@ -59,16 +80,13 @@ class WaveManager:
             
         # Move to next enemy type if current one is done
         if self.remaining_spawns <= 0:
-            #print(f"Finished spawning group {self.current_enemy_group + 1} of wave {self.current_wave + 1}")
             if self.current_enemy_group + 1 < len(groups):
-                #print(f"Preparing to spawn group {self.current_enemy_group + 2} of wave {self.current_wave + 1}")
                 self.current_enemy_group += 1
                 self.remaining_spawns = groups[self.current_enemy_group]["count"]
                 self.spawn_timer = 0 # Reset spawn timer for next group
             else:
                 # Wait for all enemies to die before completing wave
                 if len(enemy_list) == 0:
-                    print(f"Wave {self.current_wave + 1} completed!")
                     self.wave_in_progress = False
                     self.wave_timer = 0
                     self.current_enemy_group = 0
