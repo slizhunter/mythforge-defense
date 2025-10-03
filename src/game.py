@@ -1,10 +1,10 @@
 import pygame
 
-from .map import MAPS
-from .tower import Tower
-from .projectile import Projectile
-from .wave_manager import WaveManager
-from .ui_manager import UIManager
+from .entities.map import MAPS
+from .entities.tower import Tower
+from .entities.projectile import Projectile
+from .managers.wave_manager import WaveManager
+from .managers.ui_manager import UIManager
 from .config.game_config import GAME_CONFIG
 from .config.tower_config import TOWER_CONFIG
 from .config.ui_config import UI_CONFIG

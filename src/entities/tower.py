@@ -1,6 +1,6 @@
 import pygame
-from .config.tower_config import TOWER_CONFIG
-from .config.ui_config import Colors
+from ..config.tower_config import TOWER_CONFIG
+from ..config.ui_config import Colors
 from .projectile import Projectile
 
 class Tower:

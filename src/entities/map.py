@@ -1,7 +1,7 @@
 import pygame
-from .config.ui_config import Colors
-from .maps.level_1 import LEVEL_1
-from .maps.level_2 import LEVEL_2
+from ..config.ui_config import Colors
+from ..maps.level_1 import LEVEL_1
+from ..maps.level_2 import LEVEL_2
 
 class Map:
     def __init__(self, path_points, tower_points, name="Unnamed Map"):

@@ -1,6 +1,6 @@
 import pygame
-from .config.ui_config import Colors, UI_CONFIG, UI_POSITIONS
-from .config.tower_config import TOWER_CONFIG
+from ..config.ui_config import Colors, UI_CONFIG, UI_POSITIONS
+from ..config.tower_config import TOWER_CONFIG
 
 class UIManager:
     def __init__(self, screen):
