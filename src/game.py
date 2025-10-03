@@ -24,17 +24,10 @@ class Game:
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
 
-        # Wave manager
-        self.wave_manager = WaveManager(self.current_map.get_path())
-        self.wave_manager.set_game(self)  # Link back to game for bonuses
-
-        # UI Manager
+        # Managers
+        self.wave_manager = WaveManager(self, self.current_map.get_path())
         self.ui_manager = UIManager(self.screen)
-
-        # Tower Manager
         self.tower_manager = TowerManager(self)
-
-        # Enemies
         self.enemies = pygame.sprite.Group()
 
         # Projectiles

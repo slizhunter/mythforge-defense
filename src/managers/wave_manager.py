@@ -3,7 +3,8 @@ from ..entities.enemy import Enemy
 from ..config.wave_config import WAVE_CONFIG
 
 class WaveManager:
-    def __init__(self, path_points):
+    def __init__(self, game, path_points):
+        self.game = game
         self.path_points = path_points # Path enemies will follow, based on map.py
         self.current_wave = -1  # No wave started yet
         self.spawn_timer = 0    # Timer between individual enemy spawns
@@ -14,10 +15,7 @@ class WaveManager:
         self.current_enemy_group = 0 # Index of current enemy group in wave
         self.remaining_spawns = 0 # Total enemies left to spawn in current wave group
         self.game = None  # Will be set when wave manager is added to the game
-
-    def set_game(self, game):
-        self.game = game
-
+        
     def update(self, dt, enemy_list):        
         # Handle between-wave break
         if not self.wave_in_progress:
