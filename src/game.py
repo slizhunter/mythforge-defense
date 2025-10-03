@@ -1,8 +1,8 @@
 import pygame
 
 from .map import MAPS
-from .tower import Tower, BasicTower, RapidTower, SniperTower, CannonTower
-from .projectile import Shell, Sniper, Rapid, Regular
+from .tower import Tower
+from .projectile import Projectile
 from .wave_manager import WaveManager
 from .ui_manager import UIManager
 from .utils import GAME_CONFIG, TOWER_CONFIG, UI_CONFIG
@@ -172,7 +172,7 @@ class Game:
                 enemy.take_damage(projectile.damage)
                 #print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
             
-            if isinstance(projectile, Shell):
+            if projectile.type == 'shell':  # Check for splash damage
                 #print(f"Processing Shell splash damage...")  # Debug print
                 # Check all enemies for splash damage
                 for enemy in self.enemies:
@@ -287,14 +287,7 @@ class Game:
         tower_y = y + height // 2
         
         # Create tower
-        if tower_type == 'basic':
-            new_tower = BasicTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
-        elif tower_type == 'rapid':
-            new_tower = RapidTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
-        elif tower_type == 'sniper':
-            new_tower = SniperTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
-        elif tower_type == 'cannon':
-            new_tower = CannonTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
+        new_tower = Tower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index], tower_type)
         new_tower.game = self  # Link back to game for projectile management
         self.towers.append(new_tower)
 

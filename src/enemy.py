@@ -10,12 +10,10 @@ class Enemy(pygame.sprite.Sprite):
 
         # Get stats from config
         enemy_stats = ENEMY_CONFIG['types'][enemy_type]
-        self.speed = enemy_stats['speed']
-        self.max_hp = enemy_stats['hp']
+        self.type = enemy_type
+        for stat_name, value in enemy_stats.items():
+            setattr(self, stat_name, value)
         self.hp = self.max_hp
-        self.value = enemy_stats['value']
-        self.color = enemy_stats['color']
-        self.radius = enemy_stats['radius']
         
         self.direction = (0, 0)
         self.reached_goal = False
@@ -85,15 +83,3 @@ class Enemy(pygame.sprite.Sprite):
     
     def get_size(self):
         return self.radius
-
-class BasicEnemy(Enemy):
-    def __init__(self, path_points):
-        super().__init__(path_points, 'basic')
-    
-class FastEnemy(Enemy):
-    def __init__(self, path_points):
-        super().__init__(path_points, 'fast')
-
-class TankEnemy(Enemy):
-    def __init__(self, path_points):
-        super().__init__(path_points, 'tank')

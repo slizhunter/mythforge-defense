@@ -37,7 +37,7 @@ ENEMY_CONFIG = {
         'basic': {
             'class': 'BasicEnemy',
             'speed': 100,
-            'hp': 25,
+            'max_hp': 25,
             'value': 1,
             'color': (70, 130, 180),  # Steel blue
             'radius': 14
@@ -45,7 +45,7 @@ ENEMY_CONFIG = {
         'fast': {
             'class': 'FastEnemy',
             'speed': 250,
-            'hp': 15,
+            'max_hp': 15,
             'value': 2,
             'color': (255, 165, 0),  # Orange
             'radius': 10
@@ -53,7 +53,7 @@ ENEMY_CONFIG = {
         'tank': {
             'class': 'TankEnemy',
             'speed': 70,
-            'hp': 100,
+            'max_hp': 100,
             'value': 5,
             'color': (139, 69, 19),  # Saddle brown
             'radius': 20
@@ -142,19 +142,22 @@ PROJECTILE_CONFIG = {
         'speed': 400,
         'damage': 20,
         'color': Colors.RED,
-        'size': 6
+        'size': 6,
+        'splash_radius': 1  # Area damage radius
     },
     'rapid': {
         'speed': 600,
         'damage': 7,
         'color': Colors.PURPLE,
-        'size': 5
+        'size': 5,
+        'splash_radius': 1  # Area damage radius
     },
     'sniper': {
         'speed': 700,
         'damage': 50,
         'color': Colors.GREEN,
-        'size': 7
+        'size': 7,
+        'splash_radius': 1  # Area damage radius
     },
     'shell': {
         'speed': 300,

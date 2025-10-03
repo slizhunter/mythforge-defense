@@ -1,6 +1,6 @@
 import pygame
-from .enemy import BasicEnemy, FastEnemy, TankEnemy
-from .utils import WAVE_CONFIG, ENEMY_CONFIG, GAME_CONFIG
+from .enemy import Enemy
+from .utils import WAVE_CONFIG
 
 class WaveManager:
     def __init__(self, path_points):
@@ -14,14 +14,6 @@ class WaveManager:
         self.current_enemy_group = 0 # Index of current enemy group in wave
         self.remaining_spawns = 0 # Total enemies left to spawn in current wave group
         self.game = None  # Will be set when wave manager is added to the game
-
-        # Dynamically create enemy type mapping
-        self.ENEMY_TYPES = {}
-        for enemy_type, stats in ENEMY_CONFIG['types'].items():
-            class_name = stats['class']
-            # Get the class from the enemy module
-            enemy_class = globals()[class_name]
-            self.ENEMY_TYPES[enemy_type] = enemy_class
 
     def set_game(self, game):
         self.game = game
@@ -96,14 +88,8 @@ class WaveManager:
             print("All waves completed!")
     
     def _spawn_enemy(self, enemy_type):
-        """Create a new enemy of specified type"""
-        enemy_class = self.ENEMY_TYPES.get(enemy_type)
-        if not enemy_class:
-            raise ValueError(f"Unknown enemy type: {enemy_type}")
-        
-        return enemy_class(
-            self.path_points
-        )
+        """Create a new enemy of specified type"""        
+        return Enemy(self.path_points, enemy_type)
 
     def _award_wave_completion_bonus(self):
         """Award bonus for completing a wave"""

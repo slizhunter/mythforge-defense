@@ -6,11 +6,9 @@ class Projectile(pygame.sprite.Sprite):
         super().__init__()
         # Get stats from config
         projectile_stats = PROJECTILE_CONFIG[projectile_type]
-        self.speed = projectile_stats['speed']
-        self.damage = projectile_stats['damage']
-        self.color = projectile_stats['color']
-        self.size = projectile_stats['size']
-        self.splash_radius = projectile_stats['splash_radius'] if 'splash_radius' in projectile_stats else 1
+        self.type = projectile_type
+        for stat_name, value in projectile_stats.items():
+            setattr(self, stat_name, value)
 
         self.image = pygame.Surface((self.size, self.size))
         self.image.fill(self.color)
@@ -58,23 +56,3 @@ class Projectile(pygame.sprite.Sprite):
         # Linear falloff: 100% damage at center, 50% at edge
         damage_multiplier = 1 - (distance_to_impact / self.splash_radius) * 0.5
         return int(self.damage * damage_multiplier)
-
-class Regular(Projectile):
-    def __init__(self, start_pos, target_enemy):
-        super().__init__(start_pos, target_enemy, 'regular')
-        # Regular target specific initialization if needed
-
-class Rapid(Projectile):
-    def __init__(self, start_pos, target_enemy):
-        super().__init__(start_pos, target_enemy, 'rapid')
-        # Rapid specific initialization if needed
-
-class Sniper(Projectile):
-    def __init__(self, start_pos, target_enemy):
-        super().__init__(start_pos, target_enemy, 'sniper')
-        # Sniper specific initialization if needed
-
-class Shell(Projectile):
-    def __init__(self, start_pos, target_enemy):
-        super().__init__(start_pos, target_enemy, 'shell')
-        # Shell specific initialization if needed

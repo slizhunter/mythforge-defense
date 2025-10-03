@@ -1,5 +1,5 @@
-import pygame, importlib
-from .utils import Colors, TOWER_CONFIG, PROJECTILE_CONFIG
+import pygame
+from .utils import Colors, TOWER_CONFIG
 from .projectile import Projectile
 
 class Tower:
@@ -13,11 +13,9 @@ class Tower:
         tower_stats = TOWER_CONFIG['type'][tower_type]
         self.size = TOWER_CONFIG['size']
         self.sell_value_pct = TOWER_CONFIG['sell_value_pct']
-        self.range = tower_stats['range']
-        self.cost = tower_stats['cost']
-        self.fire_rate = tower_stats['fire_rate']
-        self.projectile_type = tower_stats['projectile_type']
-        self.color = tower_stats['color']
+        self.type = tower_type
+        for stat_name, value in tower_stats.items():
+            setattr(self, stat_name, value)
 
         # Combat variables
         self.fire_timer = 0 # Time since last shot
@@ -63,13 +61,10 @@ class Tower:
     
     def fire_at(self, enemy):
         """Create appropriate projectile type based on tower's projectile_type"""
-        # Dynamically get the projectile class
-        projectile_module = importlib.import_module('.projectile', package='src')
-        projectile_class = getattr(projectile_module, self.projectile_type.capitalize())
-        
-        new_projectile = projectile_class(
+        new_projectile = Projectile(
             start_pos=(self.x, self.y),
-            target_enemy=enemy
+            target_enemy=enemy,
+            projectile_type=self.projectile_type
         )
         self.game.projectiles.add(new_projectile)
 
@@ -88,19 +83,3 @@ class Tower:
     def sell(self):
         self.target = None
         self.game = None  # Remove reference to game
-
-class BasicTower(Tower):
-    def __init__(self, x_pos, y_pos, tower_rect):
-        super().__init__(x_pos, y_pos, tower_rect, 'basic')
-
-class RapidTower(Tower):
-    def __init__(self, x_pos, y_pos, tower_rect):
-        super().__init__(x_pos, y_pos, tower_rect, 'rapid')
-
-class SniperTower(Tower):
-    def __init__(self, x_pos, y_pos, tower_rect):
-        super().__init__(x_pos, y_pos, tower_rect, 'sniper')
-
-class CannonTower(Tower):
-    def __init__(self, x_pos, y_pos, tower_rect):
-        super().__init__(x_pos, y_pos, tower_rect, 'cannon')
