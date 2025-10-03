@@ -103,42 +103,37 @@ WAVE_CONFIG = {
 TOWER_CONFIG = {
     'size': 50,
     'sell_value_pct': 0.5,  # Percentage of cost returned on sell
-    'type_count': 3,
-    'basic': {
-        'cost': 40,
-        'range': 150,
-        'fire_rate': 1.0,  # shots per second
-        'projectile_speed': 300,
-        'projectile_type': 'regular',
-        'color': Colors.RED
-    },
-    'rapid': {
-        'cost': 60,
-        'range': 120,
-        'fire_rate': 3.0,  # shots per second
-        'projectile_type': 'rapid',
-        'color': Colors.PURPLE
-    },
-    'sniper': {
-        'cost': 100,
-        'range': 300,
-        'fire_rate': 0.5,  # shots per second
-        'projectile_type': 'sniper',
-        'color': Colors.GREEN
-    },
-    'cannon': {
-        'cost': 80,
-        'range': 180,
-        'fire_rate': 0.8,  # shots per second
-        'projectile_type': 'shell',
-        'color': Colors.ORANGE
-    },
-    'gear_assembly': {
-        'cost': 120,
-        'range': 200,
-        'fire_rate': 1.5,  # shots per second
-        'projectile_type': 'slow',
-        'color': Colors.BLUE
+    'type_count': 4,
+    'type': {
+        'basic': {
+            'cost': 40,
+            'range': 150,
+            'fire_rate': 1.0,  # shots per second
+            'projectile_speed': 300,
+            'projectile_type': 'regular',
+            'color': Colors.RED
+        },
+        'rapid': {
+            'cost': 60,
+            'range': 120,
+            'fire_rate': 3.0,  # shots per second
+            'projectile_type': 'rapid',
+            'color': Colors.PURPLE
+        },
+        'sniper': {
+            'cost': 100,
+            'range': 300,
+            'fire_rate': 0.5,  # shots per second
+            'projectile_type': 'sniper',
+            'color': Colors.GREEN
+        },
+        'cannon': {
+            'cost': 80,
+            'range': 180,
+            'fire_rate': 0.8,  # shots per second
+            'projectile_type': 'shell',
+            'color': Colors.ORANGE
+        }
     }
 }
 
@@ -146,7 +141,7 @@ PROJECTILE_CONFIG = {
     'regular': {
         'speed': 400,
         'damage': 20,
-        'color': Colors.YELLOW,
+        'color': Colors.RED,
         'size': 6
     },
     'rapid': {
@@ -164,16 +159,9 @@ PROJECTILE_CONFIG = {
     'shell': {
         'speed': 300,
         'damage': 20,
-        'color': Colors.BROWN,
-        'size': 8
-    },
-    'slow': {
-        'speed': 200,
-        'damage': 0,
-        'color': Colors.CYAN,
-        'size': 10,
-        'slow_effect': 0.5,  # slows enemy to 50% speed
-        'duration': 2.0      # effect lasts for 2 seconds
+        'color': Colors.ORANGE,
+        'size': 8,
+        'splash_radius': 100  # Area damage radius
     }
 }
 

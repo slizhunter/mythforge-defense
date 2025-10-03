@@ -1,6 +1,8 @@
 import pygame
+
 from .map import MAPS
-from .tower import Tower, BasicTower, RapidTower, SniperTower
+from .tower import Tower, BasicTower, RapidTower, SniperTower, CannonTower
+from .projectile import Shell, Sniper, Rapid, Regular
 from .wave_manager import WaveManager
 from .ui_manager import UIManager
 from .utils import GAME_CONFIG, TOWER_CONFIG, UI_CONFIG
@@ -8,7 +10,7 @@ from .utils import GAME_CONFIG, TOWER_CONFIG, UI_CONFIG
 class Game:
     def __init__(self, screen):
         # Set starting map
-        self.current_map = MAPS["level_1"]
+        self.current_map = MAPS["level_2"]
 
         # Initialize game state
         self.init_game(screen)
@@ -156,16 +158,34 @@ class Game:
         
         # Check projectile collisions with enemies
         hits = pygame.sprite.groupcollide(
-            self.projectiles, 
-            enemy_sprites, 
-            True,  # Destroy projectile on hit
-            False, # Do not destroy enemy on hit
-            pygame.sprite.collide_rect
+            self.projectiles,           # Group 1: All projectiles
+            enemy_sprites,              # Group 2: All enemies
+            True,                       # Delete projectiles that hit
+            False,                      # Don't delete enemies that get hit
+            pygame.sprite.collide_rect  # Use rectangle collision
         )
         for projectile, enemies_hit in hits.items():
+            impact_pos = pygame.math.Vector2(projectile.pos)
+            #print(f"Projectile hit! Type: {type(projectile).__name__}")  # Debug print
+
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)
                 #print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
+            
+            if isinstance(projectile, Shell):
+                #print(f"Processing Shell splash damage...")  # Debug print
+                # Check all enemies for splash damage
+                for enemy in self.enemies:
+                    if enemy not in enemies_hit:  # Skip directly hit enemies
+                        enemy_pos = pygame.math.Vector2(enemy.get_pos())  # Convert to Vector2
+                        distance_to_impact = enemy_pos.distance_to(impact_pos)
+                        #print(f"Checking enemy at distance {distance_to_impact}")  # Debug print
+                        if distance_to_impact <= projectile.splash_radius:  # Add explicit radius check
+                            splash_damage = projectile.get_splash_damage(distance_to_impact)
+                            #print(f"Splash damage calculated: {splash_damage}")  # Debug print
+                            if splash_damage > 0:
+                                #print(f"Applying splash damage: {splash_damage} at distance {distance_to_impact}")
+                                enemy.take_damage(splash_damage)
 
     def draw(self):
         # Clear screen
@@ -220,7 +240,7 @@ class Game:
                         break
                         
                 if spot_empty:
-                    tower_config = TOWER_CONFIG[self.selected_tower_type]
+                    tower_config = TOWER_CONFIG['type'][self.selected_tower_type]
                     # Draw range circle
                     x = rect.centerx
                     y = rect.centery
@@ -256,7 +276,7 @@ class Game:
                 print("Spot already occupied!")
                 return False
 
-        if self.money < TOWER_CONFIG[tower_type]['cost']:
+        if self.money < TOWER_CONFIG['type'][tower_type]['cost']:
             print("Insufficient money!")
             return False
 
@@ -273,6 +293,8 @@ class Game:
             new_tower = RapidTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
         elif tower_type == 'sniper':
             new_tower = SniperTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
+        elif tower_type == 'cannon':
+            new_tower = CannonTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
         new_tower.game = self  # Link back to game for projectile management
         self.towers.append(new_tower)
 

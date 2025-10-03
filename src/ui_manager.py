@@ -59,13 +59,15 @@ class UIManager:
     def _draw_tower_shop(self):
         # --- draw tower selection ---
         size = TOWER_CONFIG['size']
+        tower_config = TOWER_CONFIG['type']
         # Draw tower shop area rectangle
         shop_rect = pygame.Rect(10, 200, size * 2, size * TOWER_CONFIG['type_count'] * 2.5)  # x, y, width, height
         pygame.draw.rect(self.screen, Colors.BLACK, shop_rect, 2)  # 2 is border thickness
         # Draw tower options
-        next_tower = self.__draw_tower_option("Basic", shop_rect, TOWER_CONFIG['basic'], shop_rect.top)
-        next_tower = self.__draw_tower_option("Rapid", shop_rect, TOWER_CONFIG['rapid'], next_tower)
-        next_tower = self.__draw_tower_option("Sniper", shop_rect, TOWER_CONFIG['sniper'], next_tower)
+        next_tower = self.__draw_tower_option("Basic", shop_rect, tower_config['basic'], shop_rect.top)
+        next_tower = self.__draw_tower_option("Rapid", shop_rect, tower_config['rapid'], next_tower)
+        next_tower = self.__draw_tower_option("Sniper", shop_rect, tower_config['sniper'], next_tower)
+        next_tower = self.__draw_tower_option("Cannon", shop_rect, tower_config['cannon'], next_tower)
 
     def __draw_tower_option(self, name, shop_rect, tower_config, top_y):
         size = TOWER_CONFIG['size']

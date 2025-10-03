@@ -1,5 +1,5 @@
-import pygame
-from .utils import Colors, TOWER_CONFIG
+import pygame, importlib
+from .utils import Colors, TOWER_CONFIG, PROJECTILE_CONFIG
 from .projectile import Projectile
 
 class Tower:
@@ -10,7 +10,7 @@ class Tower:
         self.rect = tower_rect
 
         # Tower stats
-        tower_stats = TOWER_CONFIG[tower_type]
+        tower_stats = TOWER_CONFIG['type'][tower_type]
         self.size = TOWER_CONFIG['size']
         self.sell_value_pct = TOWER_CONFIG['sell_value_pct']
         self.range = tower_stats['range']
@@ -62,10 +62,14 @@ class Tower:
         return distance < (self.range + enemy_radius)
     
     def fire_at(self, enemy):
-        new_projectile = Projectile(
+        """Create appropriate projectile type based on tower's projectile_type"""
+        # Dynamically get the projectile class
+        projectile_module = importlib.import_module('.projectile', package='src')
+        projectile_class = getattr(projectile_module, self.projectile_type.capitalize())
+        
+        new_projectile = projectile_class(
             start_pos=(self.x, self.y),
-            target_enemy=enemy,
-            projectile_type=self.projectile_type
+            target_enemy=enemy
         )
         self.game.projectiles.add(new_projectile)
 
@@ -96,3 +100,7 @@ class RapidTower(Tower):
 class SniperTower(Tower):
     def __init__(self, x_pos, y_pos, tower_rect):
         super().__init__(x_pos, y_pos, tower_rect, 'sniper')
+
+class CannonTower(Tower):
+    def __init__(self, x_pos, y_pos, tower_rect):
+        super().__init__(x_pos, y_pos, tower_rect, 'cannon')
