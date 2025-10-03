@@ -1,5 +1,6 @@
 import pygame
-from .utils import SCREEN_HEIGHT, SCREEN_WIDTH, PROJECTILE_CONFIG
+from .config.ui_config import SCREEN_HEIGHT, SCREEN_WIDTH
+from .config.projectile_config import PROJECTILE_CONFIG
 
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_enemy, projectile_type='regular'):

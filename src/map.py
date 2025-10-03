@@ -1,5 +1,6 @@
 import pygame
-from .utils import Colors, TOWER_CONFIG
+from .config.tower_config import TOWER_CONFIG
+from .config.ui_config import Colors
 
 class Map:
     def __init__(self, path_points, tower_points, name="Unnamed Map"):

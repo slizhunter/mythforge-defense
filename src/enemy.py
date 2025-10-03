@@ -1,5 +1,5 @@
 import pygame
-from .utils import ENEMY_CONFIG
+from .config.enemy_config import ENEMY_CONFIG
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, path_points, enemy_type='basic'):

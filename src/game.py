@@ -5,7 +5,9 @@ from .tower import Tower
 from .projectile import Projectile
 from .wave_manager import WaveManager
 from .ui_manager import UIManager
-from .utils import GAME_CONFIG, TOWER_CONFIG, UI_CONFIG
+from .config.game_config import GAME_CONFIG
+from .config.tower_config import TOWER_CONFIG
+from .config.ui_config import UI_CONFIG
 
 class Game:
     def __init__(self, screen):
