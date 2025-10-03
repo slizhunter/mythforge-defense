@@ -28,10 +28,10 @@ class Tower:
     
     def update(self, dt):
         # First check if target is still valid
-        if self.target and (
-            self.target.is_dead() or 
-            not self.detect_enemy(self.target.get_pos(), self.target.get_size()) or
-            self.target not in self.game.enemies
+        if self.target and (            # Check if target exists
+            self.target.is_dead() or    # Check if target is dead
+            not self.detect_enemy(self.target.get_pos(), self.target.get_size()) or # Check if target is out of range
+            self.target not in self.game.enemies # Check if target is still in game
         ):
             self.target = None
             return
