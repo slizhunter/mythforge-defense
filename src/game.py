@@ -8,7 +8,7 @@ from .map import (PATH_POINTS,
                   draw_end_point)
 from .tower import Tower, BasicTower, RapidTower, SniperTower
 from .wave_manager import WaveManager
-from .utils import Colors, GAME_CONFIG, TOWER_CONFIG, UI_CONFIG, UI_POSITIONS
+from .utils import Colors, GAME_CONFIG, TOWER_CONFIG, WAVE_CONFIG, UI_CONFIG, UI_POSITIONS
 
 class Game:
     def __init__(self, screen):
@@ -22,6 +22,7 @@ class Game:
 
         # Spawning behavior
         self.wave_manager = WaveManager(PATH_POINTS)
+        self.wave_manager.set_game(self)  # Link back to game for bonuses
 
         # Towers
         self.selected_tower_type = 'basic'

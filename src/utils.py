@@ -24,7 +24,7 @@ FPS = 60
 
 GAME_CONFIG = {
     'starting_lives': 20,
-    'starting_money': 80,
+    'starting_money': 100,
     'initial_speed': 1.0,
 }
 
@@ -157,7 +157,7 @@ PROJECTILE_CONFIG = {
     },
     'sniper': {
         'speed': 700,
-        'damage': 20,
+        'damage': 50,
         'color': Colors.GREEN,
         'size': 7
     },

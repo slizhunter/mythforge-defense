@@ -13,6 +13,7 @@ class WaveManager:
         self.wave_in_progress = False # Is a wave currently active?
         self.current_enemy_group = 0 # Index of current enemy group in wave
         self.remaining_spawns = 0 # Total enemies left to spawn in current wave group
+        self.game = None  # Will be set when wave manager is added to the game
 
         # Dynamically create enemy type mapping
         self.ENEMY_TYPES = {}
@@ -22,11 +23,10 @@ class WaveManager:
             enemy_class = globals()[class_name]
             self.ENEMY_TYPES[enemy_type] = enemy_class
 
-    def update(self, dt, enemy_list):
-        # Check for game completion
-        if self._is_game_completed():
-                return
-        
+    def set_game(self, game):
+        self.game = game
+
+    def update(self, dt, enemy_list):        
         # Handle between-wave break
         if not self.wave_in_progress:
             return self._handle_wave_break(dt)
@@ -34,19 +34,18 @@ class WaveManager:
         wave = self.waves[self.current_wave]            # Current wave details
         groups = wave["groups"]
 
-        # Check for wave completion
-        if self._is_wave_completed(groups, enemy_list):
-            return
-
         # Handle enemy spawning
         self._handle_enemy_spawning(dt, groups, enemy_list)
 
-    def _is_game_completed(self):
-        """Check if all waves are done"""
-        if self.current_wave >= len(self.waves) - 1 and not self.wave_in_progress:
-            print("All waves completed!")
-            return True
-        return False
+    def reset(self):
+        """Reset wave manager to initial state"""
+        self.current_wave = -1  # No wave started yet
+        self.spawn_timer = 0
+        self.wave_timer = 0
+        self.wave_in_progress = False
+        self.enemies_spawned = 0
+        self.current_enemy_group = 0
+        self.remaining_spawns = 0
     
     def _handle_wave_break(self, dt):
         """Handle time between waves"""
@@ -54,17 +53,14 @@ class WaveManager:
         if self.wave_timer >= self.wave_interval:
             self._start_next_wave()
         
-    def _is_wave_completed(self, groups, enemy_list):
+    def _is_wave_completed(self, enemy_list):
         """Check if current wave is finished"""
-        if (self.current_enemy_group >= len(groups) and 
-            self.remaining_spawns <= 0 and 
-            len(enemy_list) == 0):
+        if len(enemy_list) == 0:
             print(f"Wave {self.current_wave + 1} completed!")
             self.wave_in_progress = False
             self.wave_timer = 0
             self.current_enemy_group = 0
-            return True
-        return False
+            self._award_wave_completion_bonus()
     
     def _handle_enemy_spawning(self, dt, groups, enemy_list):
         """Handle enemy spawning and group progression"""
@@ -85,21 +81,7 @@ class WaveManager:
                 self.remaining_spawns = groups[self.current_enemy_group]["count"]
                 self.spawn_timer = 0 # Reset spawn timer for next group
             else:
-                # Wait for all enemies to die before completing wave
-                if len(enemy_list) == 0:
-                    self.wave_in_progress = False
-                    self.wave_timer = 0
-                    self.current_enemy_group = 0
-    
-    def reset(self):
-        """Reset wave manager to initial state"""
-        self.current_wave = -1  # No wave started yet
-        self.spawn_timer = 0
-        self.wave_timer = 0
-        self.wave_in_progress = False
-        self.enemies_spawned = 0
-        self.current_enemy_group = 0
-        self.remaining_spawns = 0
+                self._is_wave_completed(enemy_list)
     
     def _start_next_wave(self):
         # Only increment if we haven't reached the last wave
@@ -122,6 +104,13 @@ class WaveManager:
         return enemy_class(
             self.path_points
         )
+
+    def _award_wave_completion_bonus(self):
+        """Award bonus for completing a wave"""
+        if self.game and self.current_wave >= 0:
+            bonus = WAVE_CONFIG['completion_bonus']['base'] + (WAVE_CONFIG['completion_bonus']['increment'] * self.current_wave)
+            self.game.money += bonus
+            print(f"Wave Bonus: ${bonus}")
 
     def get_wave_info(self):
         if self.current_wave == -1:  # First wave hasn't started
