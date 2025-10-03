@@ -1,96 +1,161 @@
 import pygame
 from .utils import Colors, TOWER_CONFIG
 
-# A simple zig-zag path for demo
-PATH_POINTS = [
-    (100, 100),
-    (450, 100),
-    (450, 400),
-    (700, 400),
-    (700, 650),
-    (950, 650)
-]
+class Map:
+    def __init__(self, path_points, tower_points, name="Unnamed Map"):
+        self.name = name
+        self.path_points = path_points
+        self.tower_points = tower_points
+        self.tower_rects = [pygame.Rect(spot) for spot in tower_points]
+
+    def draw_path(self, screen):
+        if len(self.path_points) > 1:
+            pygame.draw.lines(screen, (140, 140, 35), False, self.path_points, 41)
+
+        # Draw connection points between path segments
+        for pt in self.path_points[1:-1]:  # Skip first and last points
+            pygame.draw.circle(screen, (140, 140, 35), pt, 20)
+
+    def draw_spawn_point(self, screen):
+        if self.path_points:
+            spawn_pos = self.path_points[0]
+            pygame.draw.circle(screen, Colors.GREEN, spawn_pos, 40)
+            pygame.draw.circle(screen, Colors.DARK_GREEN, spawn_pos, 40, 2)
+
+    def draw_end_point(self, screen):
+        if self.path_points:
+            end_pos = self.path_points[-1]
+            pygame.draw.circle(screen, Colors.RED, end_pos, 40)
+            pygame.draw.circle(screen, Colors.DARK_RED, end_pos, 40, 2)
+
+    def draw_tower_spots(self, screen):
+        for spot in self.tower_points:
+            pygame.draw.rect(screen, (200,200,50), spot, 1)
+
+    def get_path(self):
+        return self.path_points
+
+    def get_tower_points(self):
+        return self.tower_points
+
+    def get_tower_rects(self):
+        return self.tower_rects
 
 size = TOWER_CONFIG['size']
 
-# Tower placement spots (x, y, width, height)
-TOWER_POINTS = [
-    # Below path
-    (150, 150, size, size),
-    (200, 150, size, size),
-    (250, 150, size, size),   
-    (300, 150, size, size),
-    (350, 150, size, size),
+LEVEL_1 = {
+    'name': "The First Trial",
+    'path_points': [
+        (100, 100),
+        (450, 100),
+        (450, 400),
+        (700, 400),
+        (700, 650),
+        (950, 650)
+    ],
+    'tower_points': [
+        (150, 150, size, size),
+        (200, 150, size, size),
+        (250, 150, size, size),   
+        (300, 150, size, size),
+        (350, 150, size, size),
 
-    (350, 200, size, size),  
-    (350, 250, size, size),
-    (350, 300, size, size),
-    (350, 350, size, size),
-    (350, 400, size, size),
-    (350, 450, size, size),
+        (350, 200, size, size),  
+        (350, 250, size, size),
+        (350, 300, size, size),
+        (350, 350, size, size),
+        (350, 400, size, size),
+        (350, 450, size, size),
 
-    (400, 450, size, size),
-    (450, 450, size, size),
-    (500, 450, size, size),
-    (550, 450, size, size),
-    (600, 450, size, size),
+        (400, 450, size, size),
+        (450, 450, size, size),
+        (500, 450, size, size),
+        (550, 450, size, size),
+        (600, 450, size, size),
 
-    (600, 500, size, size),
-    (600, 550, size, size),
-    (600, 600, size, size),
-    (600, 650, size, size),
-    
-    #Above path
-    (500, 100, size, size),
-    (500, 150, size, size),
-    (500, 200, size, size),
-    (500, 250, size, size),
-    (500, 300, size, size),
+        (600, 500, size, size),
+        (600, 550, size, size),
+        (600, 600, size, size),
+        (600, 650, size, size),
+        
+        (500, 100, size, size),
+        (500, 150, size, size),
+        (500, 200, size, size),
+        (500, 250, size, size),
+        (500, 300, size, size),
 
-    (550, 300, size, size),
-    (600, 300, size, size),
-    (650, 300, size, size),
-    (700, 300, size, size),
-    (750, 300, size, size),
+        (550, 300, size, size),
+        (600, 300, size, size),
+        (650, 300, size, size),
+        (700, 300, size, size),
+        (750, 300, size, size),
 
-    (750, 350, size, size),
-    (750, 400, size, size),
-    (750, 450, size, size),
-    (750, 500, size, size),
-    (750, 550, size, size),
+        (750, 350, size, size),
+        (750, 400, size, size),
+        (750, 450, size, size),
+        (750, 500, size, size),
+        (750, 550, size, size),
 
-    (800, 550, size, size),
-    (850, 550, size, size),
-    
-]
+        (800, 550, size, size),
+        (850, 550, size, size),
+    ]
+}
 
-TOWER_RECTS = [pygame.Rect(spot) for spot in TOWER_POINTS]
+LEVEL_2 = {
+    'name': "Valley of Death",
+    'path_points': [
+        (100, 650),  # Start bottom left
+        (300, 650),
+        (300, 100),  # Up
+        (600, 100),  # Right
+        (600, 650),  # Down
+        (900, 650),  # End bottom right
+    ],
+    'tower_points': [
+        (150, 600, size, size),
+        (200, 600, size, size),
+        (250, 600, size, size),
 
-def draw_path(screen, path_points):
-    # Draw main path (lighter center)
-    if len(path_points) > 1:
-        pygame.draw.lines(screen, (140, 140, 35), False, path_points, 41)
-    
-    # Draw connection points between path segments
-    for pt in path_points[1:-1]:  # Skip first and last points
-        # Darker outer circle
-        pygame.draw.circle(screen, (140, 140, 35), pt, 20)
-        # Lighter inner circle
-        pygame.draw.circle(screen, (140, 140, 35), pt, 20)
+        (250, 550, size, size),
+        (250, 500, size, size),
+        (250, 450, size, size),
+        (250, 400, size, size),
+        (250, 350, size, size),
+        (250, 300, size, size),
+        (250, 250, size, size),
+        (250, 200, size, size),
+        (250, 150, size, size),
 
-def draw_spawn_point(screen, path_points):
-    if path_points:
-        spawn_pos = path_points[0]
-        pygame.draw.circle(screen, Colors.GREEN, spawn_pos, 40)
-        pygame.draw.circle(screen, Colors.DARK_GREEN, spawn_pos, 40, 2)
+        (300, 150, size, size),
+        (350, 150, size, size),
+        (400, 150, size, size),
+        (450, 150, size, size),
+        (500, 150, size, size),
 
-def draw_end_point(screen, path_points):
-    if path_points:
-        end_pos = path_points[-1]
-        pygame.draw.circle(screen, Colors.RED, end_pos, 40)
-        pygame.draw.circle(screen, Colors.DARK_RED, end_pos, 40, 2)
+        (500, 200, size, size),
+        (500, 250, size, size),
+        (500, 300, size, size),
+        (500, 350, size, size),
+        (500, 400, size, size),
+        (500, 450, size, size),
+        (500, 500, size, size),
+        (500, 550, size, size),
 
-def draw_tower_spots(screen, tower_points):
-    for spot in tower_points:
-        pygame.draw.rect(screen, (200,200,50), spot, 1)
+        (550, 550, size, size),
+        (600, 550, size, size),
+        (650, 550, size, size),
+        (700, 550, size, size),
+        (750, 550, size,size),
 
+        (750, 600,size,size),
+        (800 ,600,size,size),
+        (850 ,600,size,size),
+    ]
+}
+
+# Create map instances
+MAPS = {
+    "level_1": Map(LEVEL_1['path_points'], LEVEL_1['tower_points'], LEVEL_1['name']),
+    "level_2": Map(LEVEL_2['path_points'], LEVEL_2['tower_points'], LEVEL_2['name']),
+    # Add more maps as needed
+}

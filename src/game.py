@@ -1,11 +1,5 @@
 import pygame
-from .map import (PATH_POINTS, 
-                  TOWER_POINTS, 
-                  TOWER_RECTS, 
-                  draw_path, 
-                  draw_tower_spots, 
-                  draw_spawn_point,
-                  draw_end_point)
+from .map import MAPS
 from .tower import Tower, BasicTower, RapidTower, SniperTower
 from .wave_manager import WaveManager
 from .ui_manager import UIManager
@@ -13,6 +7,10 @@ from .utils import GAME_CONFIG, TOWER_CONFIG, UI_CONFIG
 
 class Game:
     def __init__(self, screen):
+        # Set starting map
+        self.current_map = MAPS["level_1"]
+
+        # Initialize game state
         self.init_game(screen)
 
     def init_game(self, screen):
@@ -22,7 +20,7 @@ class Game:
         self.screen_height = screen.get_height()
 
         # Wave manager
-        self.wave_manager = WaveManager(PATH_POINTS)
+        self.wave_manager = WaveManager(self.current_map.get_path())
         self.wave_manager.set_game(self)  # Link back to game for bonuses
 
         # UI Manager
@@ -73,7 +71,7 @@ class Game:
                     self.speed_factor /= 2.0
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1: # left mouse click
-                for i, rect in enumerate(TOWER_RECTS):
+                for i, rect in enumerate(self.current_map.get_tower_rects()):
                     if rect.collidepoint(event.pos):
                         self.place_tower(i, self.selected_tower_type)
                         break
@@ -187,15 +185,22 @@ class Game:
     def draw_playing(self):
         self.ui_manager.draw(self, self.wave_manager)
         self._draw_towers()
-        draw_path(self.screen, PATH_POINTS)
+        self.current_map.draw_path(self.screen)
         self._draw_enemies()
-        draw_spawn_point(self.screen, PATH_POINTS)
-        draw_end_point(self.screen, PATH_POINTS)
+        self.current_map.draw_spawn_point(self.screen)
+        self.current_map.draw_end_point(self.screen)
         self.projectiles.draw(self.screen)
+
+    def load_map(self, map_id):
+        """Change to a different map"""
+        if map_id in MAPS:
+            self.current_map = MAPS[map_id]
+            self.wave_manager.set_path(self.current_map.get_path())
+            self.reset_game()
 
     def _draw_towers(self):
         # --- tower placement ---
-        draw_tower_spots(self.screen, TOWER_POINTS)
+        self.current_map.draw_tower_spots(self.screen)
         mouse_pos = pygame.mouse.get_pos()
 
         self.__draw_tower_range_preview(mouse_pos)
@@ -205,7 +210,7 @@ class Game:
     
     def __draw_tower_range_preview(self, mouse_pos):
         # Draw range preview on hover
-        for i, rect in enumerate(TOWER_RECTS):
+        for i, rect in enumerate(self.current_map.get_tower_rects()):
             if rect.collidepoint(mouse_pos):
                 # Only show preview if spot is empty
                 spot_empty = True
@@ -242,10 +247,10 @@ class Game:
             enemy.draw(self.screen)
 
     def place_tower(self, spot_index, tower_type='basic'):
-        if spot_index >= len(TOWER_POINTS):
+        if spot_index >= len(self.current_map.get_tower_points()):
             return False
-        
-        spot_rect = TOWER_RECTS[spot_index]
+
+        spot_rect = self.current_map.get_tower_rects()[spot_index]
         for existing_tower in self.towers:
             if spot_rect.collidepoint(existing_tower.x, existing_tower.y):
                 print("Spot already occupied!")
@@ -255,7 +260,7 @@ class Game:
             print("Insufficient money!")
             return False
 
-        x, y, width, height = TOWER_POINTS[spot_index]
+        x, y, width, height = self.current_map.get_tower_points()[spot_index]
         
         # Center the tower in the spot
         tower_x = x + width // 2
@@ -263,11 +268,11 @@ class Game:
         
         # Create tower
         if tower_type == 'basic':
-            new_tower = BasicTower(tower_x, tower_y, TOWER_RECTS[spot_index])
+            new_tower = BasicTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
         elif tower_type == 'rapid':
-            new_tower = RapidTower(tower_x, tower_y, TOWER_RECTS[spot_index])
+            new_tower = RapidTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
         elif tower_type == 'sniper':
-            new_tower = SniperTower(tower_x, tower_y, TOWER_RECTS[spot_index])
+            new_tower = SniperTower(tower_x, tower_y, self.current_map.get_tower_rects()[spot_index])
         new_tower.game = self  # Link back to game for projectile management
         self.towers.append(new_tower)
 
