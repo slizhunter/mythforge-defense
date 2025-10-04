@@ -84,6 +84,12 @@ class Game:
                     if tower.rect.collidepoint(event.pos):
                         self.tower_manager.sell_tower(tower)
                         break
+            elif event.button == 2:  # Middle click/scroll wheel
+            # Change targeting mode
+                for tower in self.tower_manager.towers:
+                    if tower.rect.collidepoint(event.pos):
+                        self.tower_manager.cycle_tower_targeting(tower)
+                        break
         ''' --- Alternate tower placement ---
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1: # left mouse click
@@ -147,6 +153,7 @@ class Game:
             False,                      # Don't delete enemies that get hit
             pygame.sprite.collide_rect  # Use rectangle collision
         )
+        # Handle hits and apply damage
         for projectile, enemies_hit in hits.items():
             impact_pos = pygame.math.Vector2(projectile.pos)
             #print(f"Projectile hit! Type: {type(projectile).__name__}")  # Debug print
@@ -187,9 +194,9 @@ class Game:
     
     def draw_playing(self):
         self.ui_manager.draw()
-        self.tower_manager.draw(self.screen)
-        self.current_map.draw_tower_spots(self.screen)
         self.current_map.draw_path(self.screen)
+        self.current_map.draw_tower_spots(self.screen)
+        self.tower_manager.draw(self.screen)
         self._draw_enemies()
         self.current_map.draw_spawn_point(self.screen)
         self.current_map.draw_end_point(self.screen)
