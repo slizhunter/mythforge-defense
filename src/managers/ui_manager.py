@@ -3,10 +3,12 @@ from ..config.ui_config import Colors, UI_CONFIG, UI_POSITIONS
 from ..config.tower_config import TOWER_CONFIG
 
 class UIManager:
-    def __init__(self, screen):
+    def __init__(self, game, screen, wave_manager):
+        self.game = game
         self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
+        self.wave_manager = wave_manager
         
         self.shop_towers = {}  # Dict with (name, rect) for tower shop options
 
@@ -20,15 +22,15 @@ class UIManager:
         self.bg_color = UI_CONFIG["bg_color"]
         self.text_color = UI_CONFIG["text_color"]
     
-    def draw(self, game, wave_manager):
+    def draw(self):
         # Draw game world elements
         self._draw_game_world()
         
         # Draw UI stats
-        self._draw_ui_stats(game)
+        self._draw_ui_stats()
         
         # Draw wave info
-        self._draw_wave_info(wave_manager)
+        self._draw_wave_info()
 
         # Draw tower shop
         self._draw_tower_shop()
@@ -38,18 +40,18 @@ class UIManager:
         title_txt = self.large_font.render("Myth-Forge Defense", True, self.text_color)
         self.screen.blit(title_txt, UI_POSITIONS["title"])
 
-    def _draw_ui_stats(self, game):
+    def _draw_ui_stats(self):
         # --- UI text ---
-        money_txt = self.large_font.render(f"Money: {game.money}", True, (255,255,255))
+        money_txt = self.large_font.render(f"Money: {self.game.money}", True, (255,255,255))
         self.screen.blit(money_txt, UI_POSITIONS["money"])
-        lives_txt = self.large_font.render(f"Lives: {game.lives}", True, (255,255,255))
+        lives_txt = self.large_font.render(f"Lives: {self.game.lives}", True, (255,255,255))
         self.screen.blit(lives_txt, UI_POSITIONS["lives"])
-        speed_txt = self.large_font.render(f"Speed: {game.speed_factor}", True, (255,255,255))
+        speed_txt = self.large_font.render(f"Speed: {self.game.speed_factor}", True, (255,255,255))
         self.screen.blit(speed_txt, UI_POSITIONS["speed"])
 
-    def _draw_wave_info(self, wave_manager):
+    def _draw_wave_info(self):
         # --- wave info ---
-        wave_info = wave_manager.get_wave_info()
+        wave_info = self.wave_manager.get_wave_info()
         wave_txt = self.large_font.render(f"Wave: {wave_info['current_wave']}/{wave_info['total_waves']}", True, (255,255,255))
         self.screen.blit(wave_txt, UI_POSITIONS["wave"])
         

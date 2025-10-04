@@ -14,8 +14,7 @@ class WaveManager:
         self.wave_in_progress = False # Is a wave currently active?
         self.current_enemy_group = 0 # Index of current enemy group in wave
         self.remaining_spawns = 0 # Total enemies left to spawn in current wave group
-        self.game = None  # Will be set when wave manager is added to the game
-        
+
     def update(self, dt, enemy_list):        
         # Handle between-wave break
         if not self.wave_in_progress:
@@ -51,6 +50,8 @@ class WaveManager:
             self.wave_timer = 0
             self.current_enemy_group = 0
             self._award_wave_completion_bonus()
+            return True
+        return False
     
     def _handle_enemy_spawning(self, dt, groups, enemy_list):
         """Handle enemy spawning and group progression"""

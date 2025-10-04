@@ -26,8 +26,10 @@ class Game:
 
         # Managers
         self.wave_manager = WaveManager(self, self.current_map.get_path())
-        self.ui_manager = UIManager(self.screen)
+        self.ui_manager = UIManager(self, self.screen, self.wave_manager)
         self.tower_manager = TowerManager(self)
+
+        # Enemies
         self.enemies = pygame.sprite.Group()
 
         # Projectiles
@@ -184,7 +186,7 @@ class Game:
             self.ui_manager.draw_victory()
     
     def draw_playing(self):
-        self.ui_manager.draw(self, self.wave_manager)
+        self.ui_manager.draw()
         self.tower_manager.draw(self.screen)
         self.current_map.draw_tower_spots(self.screen)
         self.current_map.draw_path(self.screen)
