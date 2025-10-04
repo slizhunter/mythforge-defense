@@ -33,5 +33,6 @@ UI_POSITIONS = {
     'money': (SCREEN_WIDTH - 300, 10),
     'lives': (SCREEN_WIDTH - 125, 10),
     'speed': (10, SCREEN_HEIGHT - 40),
-    'wave_timer': (SCREEN_WIDTH//2 - 100, 50)
+    'wave_timer': (SCREEN_WIDTH//2 - 100, 50),
+    'tower_shop': (10, 100)  # Starting position for tower shop
 }

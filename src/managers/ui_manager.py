@@ -64,13 +64,34 @@ class UIManager:
         size = TOWER_CONFIG['size']
         tower_config = TOWER_CONFIG['type']
         # Draw tower shop area rectangle
-        shop_rect = pygame.Rect(10, 200, size * 2, size * TOWER_CONFIG['type_count'] * 2.5)  # x, y, width, height
+        # Calculate space needed for each tower option
+        PADDING = 10
+        NAME_HEIGHT = self.medium_font.get_height()
+        TOWER_HEIGHT = size
+        
+        # Space per tower = padding + name + padding + tower + padding + cost + padding
+        SPACE_PER_TOWER = PADDING + NAME_HEIGHT + PADDING + TOWER_HEIGHT + PADDING
+        
+        # Total height = space per tower * number of towers
+        total_height = SPACE_PER_TOWER * len(tower_config)
+        
+        # Draw tower shop area rectangle
+        shop_rect = pygame.Rect(
+            UI_POSITIONS['tower_shop'][0],           # x position
+            UI_POSITIONS['tower_shop'][1],           # y position
+            size * 2,                                # width
+            total_height                             # calculated height
+        )
         pygame.draw.rect(self.screen, Colors.BLACK, shop_rect, 2)  # 2 is border thickness
         # Draw tower options
-        next_tower = self.__draw_tower_option("Basic", shop_rect, tower_config['basic'], shop_rect.top)
-        next_tower = self.__draw_tower_option("Rapid", shop_rect, tower_config['rapid'], next_tower)
-        next_tower = self.__draw_tower_option("Sniper", shop_rect, tower_config['sniper'], next_tower)
-        next_tower = self.__draw_tower_option("Cannon", shop_rect, tower_config['cannon'], next_tower)
+        next_y = shop_rect.top
+        for tower_name, stats in tower_config.items():
+            next_y = self.__draw_tower_option(
+                name=tower_name.capitalize(),
+                shop_rect=shop_rect,
+                tower_config=stats,
+                top_y=next_y
+            )
 
     def __draw_tower_option(self, name, shop_rect, tower_config, top_y):
         size = TOWER_CONFIG['size']
