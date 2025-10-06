@@ -1,5 +1,7 @@
 import pygame
 
+from src.config.projectile_config import ELEMENTAL_EFFECTS
+
 from .entities.map import MAPS
 from .entities.tower import Tower
 from .entities.projectile import Projectile
@@ -7,7 +9,7 @@ from .managers.wave_manager import WaveManager
 from .managers.tower_manager import TowerManager
 from .managers.ui_manager import UIManager
 from .config.game_config import GAME_CONFIG
-from .config.tower_config import TOWER_CONFIG
+from .config.tower_config import ELEMENTAL_UPGRADES, TOWER_CONFIG
 from .config.ui_config import UI_CONFIG
 
 class Game:
@@ -71,13 +73,31 @@ class Game:
             if event.button == 1: # left mouse click
                 for i, rect in enumerate(self.current_map.get_tower_rects()):
                     if rect.collidepoint(event.pos):
+                        if self.tower_manager._is_spot_occupied(rect):
+                            # Check for upgrade if tower exists here
+                            for tower in self.tower_manager.towers:
+                                if tower.rect.collidepoint(event.pos):
+                                    if self.tower_manager.selected_upgrade_type:
+                                        if tower.element == self.tower_manager.selected_upgrade_type:
+                                            print("Tower already upgraded!")
+                                        else:
+                                            success = self.tower_manager.upgrade_tower(tower, self.tower_manager.selected_upgrade_type)
+                                            if success:
+                                                print(f"Upgraded tower to {self.tower_manager.selected_upgrade_type}!")
+                                        break
+                            break  # Spot occupied, no placement
                         self.tower_manager.place_tower(i, self.tower_manager.selected_tower_type)
                         break
                 for name, rect in self.ui_manager.get_shop_towers().items():
                     if rect.collidepoint(event.pos):
-                        self.tower_manager.selected_tower_type = name.lower()
-                        print(f"Selected tower type: {self.tower_manager.selected_tower_type}")
-                        break
+                        if name.lower() in TOWER_CONFIG['type']:
+                            self.tower_manager.selected_tower_type = name.lower()
+                            print(f"Selected tower type: {self.tower_manager.selected_tower_type}")
+                            break
+                        if name.lower() in ELEMENTAL_UPGRADES:
+                            self.tower_manager.selected_upgrade_type = name.lower()
+                            print(f"Selected upgrade type: {self.tower_manager.selected_upgrade_type}")
+                            break
             elif event.button == 3:  # Right click
                 # Check if clicked on a tower
                 for tower in self.tower_manager.towers:
@@ -160,6 +180,15 @@ class Game:
 
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)
+                if projectile.element:
+                    effect_data = ELEMENTAL_EFFECTS[projectile.element]
+                    if effect_data['type']:
+                        enemy.apply_effect({
+                            'type': effect_data['type'],
+                            'duration': effect_data['duration'],
+                            'damage_per_second': effect_data.get('damage_per_second', 0),
+                            'slow_pct': effect_data.get('slow_pct', 0)
+                        })
                 #print(f"Enemy hit! Enemy took {projectile.damage} damage! HP left: {enemy.hp}")
             
             if projectile.type == 'shell':  # Check for splash damage

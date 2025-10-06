@@ -1,5 +1,5 @@
 import pygame
-from ..config.tower_config import TOWER_CONFIG
+from ..config.tower_config import TOWER_CONFIG, ELEMENTAL_UPGRADES
 from ..config.ui_config import UI_CONFIG, UI_POSITIONS, Colors
 from .projectile import Projectile
 
@@ -18,6 +18,7 @@ class Tower:
         self.type = tower_type
         for stat_name, value in tower_stats.items():
             setattr(self, stat_name, value)
+        self.element = None # 'pyro', 'glacier', 'storm'
 
         # Combat variables
         self.fire_timer = 0 # Time since last shot
@@ -66,6 +67,10 @@ class Tower:
 
         # Draw tower (simple square for now)
         pygame.draw.rect(screen, self.color, (self.x - self.size/2, self.y - self.size/2, self.size, self.size))
+        if self.element:
+            # Draw element indicator
+            pygame.draw.circle(screen, ELEMENTAL_UPGRADES[self.element]['color'], 
+                               (self.x, self.y), self.size//2)
 
     def update_hover(self, mouse_pos):
         if self.rect.collidepoint(mouse_pos):
@@ -86,7 +91,13 @@ class Tower:
             target_enemy=enemy,
             projectile_type=self.projectile_type
         )
+        if self.element:
+            new_projectile.set_element(self.element)
         self.game.projectiles.add(new_projectile)
+    
+    def upgrade(self, element):
+        if element in ELEMENTAL_UPGRADES:
+            self.element = element
 
     def set_targeting_mode(self, mode):
         if mode in ['first', 'last', 'strongest', 'weakest', 'closest']:

@@ -1,6 +1,6 @@
 import pygame
 from ..config.ui_config import SCREEN_HEIGHT, SCREEN_WIDTH
-from ..config.projectile_config import PROJECTILE_CONFIG
+from ..config.projectile_config import PROJECTILE_CONFIG, ELEMENTAL_EFFECTS
 
 class Projectile(pygame.sprite.Sprite):
     def __init__(self, start_pos, target_enemy, projectile_type='regular'):
@@ -10,6 +10,7 @@ class Projectile(pygame.sprite.Sprite):
         self.type = projectile_type
         for stat_name, value in projectile_stats.items():
             setattr(self, stat_name, value)
+        self.element = None # 'pyro', 'glacier', 'storm'
 
         self.image = pygame.Surface((self.size, self.size))
         self.image.fill(self.color)
@@ -57,3 +58,10 @@ class Projectile(pygame.sprite.Sprite):
         # Linear falloff: 100% damage at center, 50% at edge
         damage_multiplier = 1 - (distance_to_impact / self.splash_radius) * 0.5
         return int(self.damage * damage_multiplier)
+    
+    def set_element(self, element_type):
+        if element_type in ELEMENTAL_EFFECTS:
+            self.element = element_type
+            # Change color based on element
+            self.color = ELEMENTAL_EFFECTS[element_type]['color']
+            self.image.fill(self.color)

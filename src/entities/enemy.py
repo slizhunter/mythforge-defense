@@ -14,6 +14,9 @@ class Enemy(pygame.sprite.Sprite):
         for stat_name, value in enemy_stats.items():
             setattr(self, stat_name, value)
         self.hp = self.max_hp
+        self.effects = []  # Active status effects (e.g., slowed, burning)
+        self.burn_damage = 0  # Damage per second from burn effect
+        self.burn_timer = 0  # Timer to track burn damage application
         
         self.direction = (0, 0)
         self.reached_goal = False
@@ -31,6 +34,9 @@ class Enemy(pygame.sprite.Sprite):
             self.reached_goal = True
             return
         
+        self._update_effects(dt)
+        self._process_effects(dt)
+
         target_x, target_y = self.path[self.current_wp + 1]
         dx = target_x - self.x
         dy = target_y - self.y
@@ -66,6 +72,39 @@ class Enemy(pygame.sprite.Sprite):
         # Foreground (green)
         pygame.draw.rect(surface, (0,255,0), 
             (bar_pos[0], bar_pos[1], int(bar_width * health_pct), bar_height))
+        
+    def apply_effect(self, effect):
+        """Apply a status effect to the enemy"""
+        # Avoid stacking same effect type
+        for existing_effect in self.effects:
+            if existing_effect['type'] == effect['type']:
+                return  # Effect already applied
+        self.effects.append(effect)
+        if effect['type'] == 'slow':
+            self.speed *= (1 - effect['slow_pct'])  # Example: slow down by 50%
+        if effect['type'] == 'burn':
+            self.burn_damage = effect['damage_per_second']
+
+
+    def _update_effects(self, dt):
+        """Update status effects over time"""
+        for effect in self.effects:
+            effect['duration'] -= dt
+            if effect['duration'] <= 0:
+                if effect['type'] == 'slow':
+                    self.speed /= (1 - effect['slow_pct'])  # Revert slow effect
+                if effect['type'] == 'burn':
+                    self.burn_damage = 0
+                self.effects.remove(effect)
+
+    def _process_effects(self, dt):
+        """Process ongoing effects like burn damage"""
+        for effect in self.effects:
+            if effect['type'] == 'burn':
+                self.burn_timer += dt
+                if self.burn_timer >= 1.0:  # Apply damage every second
+                    self.take_damage(self.burn_damage)
+                    self.burn_timer = 0  # Reset timer
 
     def take_damage(self, amount):
         self.hp -= amount

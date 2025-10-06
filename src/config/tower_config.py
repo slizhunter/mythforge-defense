@@ -36,3 +36,18 @@ TOWER_CONFIG = {
         }
     }
 }
+
+ELEMENTAL_UPGRADES = {
+    'pyro': {
+        'color': (255, 69, 0),   # Orange Red
+        'cost': 50
+    },
+    'glacier': {
+        'color': (173, 216, 230), # Light Blue
+        'cost': 50
+    },
+    'storm': {
+        'color': Colors.YELLOW,
+        'cost': 50
+    }
+}

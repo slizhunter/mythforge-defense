@@ -1,5 +1,5 @@
 import pygame
-from ..config.tower_config import TOWER_CONFIG
+from ..config.tower_config import ELEMENTAL_UPGRADES, TOWER_CONFIG
 from ..entities.tower import Tower
 
 class TowerManager:
@@ -7,6 +7,7 @@ class TowerManager:
         self.game = game
         self.towers = []
         self.selected_tower_type = 'basic'
+        self.selected_upgrade_type = None  # 'pyro', 'glacier', 'storm'
 
     def update(self, dt):
         """Update all towers and handle targeting"""
@@ -25,6 +26,7 @@ class TowerManager:
 
     def place_tower(self, spot_index, tower_type='basic'):
         """Place a new tower if possible"""
+        # Validate spot index
         if spot_index >= len(self.game.current_map.get_tower_points()):
             return False
 
@@ -64,6 +66,31 @@ class TowerManager:
             print(f"Sold tower. Money now: {self.game.money}")
         else:
             print("Tower not found!")
+    
+    def upgrade_tower(self, tower, element_type):
+        """Upgrade a tower with an elemental type"""
+        if tower not in self.towers:
+            print("Tower not found!")
+            return False
+        
+        if element_type not in ELEMENTAL_UPGRADES:
+            print("Invalid upgrade type!")
+            return False
+        
+        if tower.element is not None:
+            print("Tower already upgraded!")
+            return False
+        
+        upgrade_cost = ELEMENTAL_UPGRADES[element_type]['cost']
+        if self.game.money < upgrade_cost:
+            print("Insufficient money for upgrade!")
+            return False
+        
+        # Apply upgrade
+        tower.upgrade(element_type)
+        self.game.money -= upgrade_cost
+        print(f"Upgraded tower to {element_type}. Money left: {self.game.money}")
+        return True
 
     def _get_tower_target(self, tower):
         enemies_list = list(self.game.enemies)
