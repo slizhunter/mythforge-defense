@@ -183,6 +183,16 @@ class UIManager:
         text_rect = text.get_rect(center=(self.screen_width//2, self.screen_height//2))
         self.screen.blit(text, text_rect)
 
+    def draw_menu(self):
+        self.screen.fill(self.bg_color)
+        title_txt = self.large_font.render("Myth-Forge Defense", True, self.text_color)
+        title_rect = title_txt.get_rect(center=(self.screen_width//2, self.screen_height//4))
+        self.screen.blit(title_txt, title_rect)
+        
+        prompt_txt = self.medium_font.render("Press ENTER to Start", True, self.text_color)
+        prompt_rect = prompt_txt.get_rect(center=(self.screen_width//2, self.screen_height//2))
+        self.screen.blit(prompt_txt, prompt_rect)
+
     def get_shop_towers(self):
         """Return tower shop rectangles for click detection"""
         return self.shop_towers

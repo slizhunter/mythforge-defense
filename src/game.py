@@ -43,7 +43,7 @@ class Game:
         self.speed_factor = GAME_CONFIG["initial_speed"]
         
         # Game state
-        self.state = "playing"  # "menu", "playing", "paused", "game_over", "victory"
+        self.state = "menu"  # "menu", "playing", "paused", "game_over", "victory"
         
         # Colors for testing
         self.bg_color = UI_CONFIG["bg_color"]
@@ -69,52 +69,56 @@ class Game:
             elif event.key == pygame.K_LEFT:
                 if self.state == "playing":
                     self.speed_factor /= 2.0
+            elif event.key == pygame.K_RETURN:
+                if self.state == "menu":
+                    self.state = "playing"
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1: # left mouse click
-                for i, rect in enumerate(self.current_map.get_tower_rects()):
-                    if rect.collidepoint(event.pos):
-                        if self.tower_manager._is_spot_occupied(rect):
-                            # Check for upgrade if tower exists here
-                            for tower in self.tower_manager.towers:
-                                if tower.rect.collidepoint(event.pos):
-                                    if self.tower_manager.selected_upgrade_type:
-                                        if tower.element == self.tower_manager.selected_upgrade_type:
-                                            print("Tower already upgraded!")
-                                        else:
-                                            success = self.tower_manager.upgrade_tower(tower, self.tower_manager.selected_upgrade_type)
-                                            if success:
-                                                print(f"Upgraded tower to {self.tower_manager.selected_upgrade_type}!")
-                                        break
-                            break  # Spot occupied, no placement
-                        self.tower_manager.place_tower(i, self.tower_manager.selected_tower_type)
-                        break
-                for name, rect in self.ui_manager.get_shop_towers().items():
-                    if rect.collidepoint(event.pos):
-                        if name.lower() in TOWER_CONFIG['type']:
-                            self.tower_manager.selected_tower_type = name.lower()
-                            print(f"Selected tower type: {self.tower_manager.selected_tower_type}")
+            if self.state == "playing":
+                if event.button == 1: # left mouse click
+                    for i, rect in enumerate(self.current_map.get_tower_rects()):
+                        if rect.collidepoint(event.pos):
+                            if self.tower_manager._is_spot_occupied(rect):
+                                # Check for upgrade if tower exists here
+                                for tower in self.tower_manager.towers:
+                                    if tower.rect.collidepoint(event.pos):
+                                        if self.tower_manager.selected_upgrade_type:
+                                            if tower.element == self.tower_manager.selected_upgrade_type:
+                                                print("Tower already upgraded!")
+                                            else:
+                                                success = self.tower_manager.upgrade_tower(tower, self.tower_manager.selected_upgrade_type)
+                                                if success:
+                                                    print(f"Upgraded tower to {self.tower_manager.selected_upgrade_type}!")
+                                            break
+                                break  # Spot occupied, no placement
+                            self.tower_manager.place_tower(i, self.tower_manager.selected_tower_type)
                             break
-                        if name.lower() in ELEMENTAL_UPGRADES:
-                            self.tower_manager.selected_upgrade_type = name.lower()
-                            print(f"Selected upgrade type: {self.tower_manager.selected_upgrade_type}")
+                    for name, rect in self.ui_manager.get_shop_towers().items():
+                        if rect.collidepoint(event.pos):
+                            if name.lower() in TOWER_CONFIG['type']:
+                                self.tower_manager.selected_tower_type = name.lower()
+                                print(f"Selected tower type: {self.tower_manager.selected_tower_type}")
+                                break
+                            if name.lower() in ELEMENTAL_UPGRADES:
+                                self.tower_manager.selected_upgrade_type = name.lower()
+                                print(f"Selected upgrade type: {self.tower_manager.selected_upgrade_type}")
+                                break
+                elif event.button == 3:  # Right click
+                    # Check if clicked on a tower
+                    for tower in self.tower_manager.towers:
+                        if tower.rect.collidepoint(event.pos):
+                            self.tower_manager.sell_tower(tower)
                             break
-            elif event.button == 3:  # Right click
-                # Check if clicked on a tower
-                for tower in self.tower_manager.towers:
-                    if tower.rect.collidepoint(event.pos):
-                        self.tower_manager.sell_tower(tower)
-                        break
-            elif event.button == 2:  # Middle click/scroll wheel
-            # Change targeting mode
-                for tower in self.tower_manager.towers:
-                    if tower.rect.collidepoint(event.pos):
-                        self.tower_manager.cycle_tower_targeting(tower)
-                        break
-        ''' --- Alternate tower placement ---
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1: # left mouse click
-                self.place_tower_anywhere()
-        '''
+                elif event.button == 2:  # Middle click/scroll wheel
+                # Change targeting mode
+                    for tower in self.tower_manager.towers:
+                        if tower.rect.collidepoint(event.pos):
+                            self.tower_manager.cycle_tower_targeting(tower)
+                            break
+            ''' --- Alternate tower placement ---
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: # left mouse click
+                    self.place_tower_anywhere()
+            '''
 
     def update(self, dt):
         if self.state != "playing":
@@ -125,16 +129,17 @@ class Game:
         if self._check_victory():
             return
 
-        # Spawn logic
-        self.wave_manager.update(adjusted_dt, self.enemies)
+        if self.state == "playing":
+            # Spawn logic
+            self.wave_manager.update(adjusted_dt, self.enemies)
 
-        self._update_enemies(adjusted_dt)
-        self.tower_manager.update(adjusted_dt)
-        self._update_projectiles(adjusted_dt)
+            self._update_enemies(adjusted_dt)
+            self.tower_manager.update(adjusted_dt)
+            self._update_projectiles(adjusted_dt)
 
-        # Game-over check
-        if self.lives <= 0:
-            self.state = "game_over"
+            # Game-over check
+            if self.lives <= 0:
+                self.state = "game_over"
     
     def _check_victory(self):
         # Check for victory (all waves complete and no enemies left)
@@ -220,6 +225,8 @@ class Game:
             self.ui_manager.draw_over()
         elif self.state == "victory":
             self.ui_manager.draw_victory()
+        elif self.state == "menu":
+            self.ui_manager.draw_menu()
     
     def draw_playing(self):
         self.ui_manager.draw()

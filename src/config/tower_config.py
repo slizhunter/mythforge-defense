@@ -3,7 +3,7 @@ from .ui_config import Colors
 TOWER_CONFIG = {
     'size': 50,
     'sell_value_pct': 0.5,  # Percentage of cost returned on sell
-    'type_count': 4,
+    'targeting_modes': ['first', 'last', 'strongest', 'weakest', 'closest'],
     'type': {
         'basic': {
             'cost': 40,

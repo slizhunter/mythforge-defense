@@ -100,7 +100,7 @@ class Tower:
             self.element = element
 
     def set_targeting_mode(self, mode):
-        if mode in ['first', 'last', 'strongest', 'weakest', 'closest']:
+        if mode in TOWER_CONFIG['targeting_modes']:
             self.targeting_mode = mode
 
     def set_target(self, enemy):
