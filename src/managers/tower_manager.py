@@ -15,10 +15,11 @@ class TowerManager:
             tower.update(dt)
             self._get_tower_target(tower)
 
-    def draw(self, screen):
+    def draw(self, screen, mouse_pos):
         """Draw towers and range previews"""
-        mouse_pos = pygame.mouse.get_pos()
-        self._draw_tower_range_preview(screen, mouse_pos)
+        #mouse_pos = pygame.mouse.get_pos()
+        if self.game.state == 'playing':
+            self._draw_tower_range_preview(screen, mouse_pos)
         
         for tower in self.towers:
             tower.update_hover(mouse_pos)
@@ -153,11 +154,11 @@ class TowerManager:
                 
                 # Draw range circle outline
                 pygame.draw.circle(
-                    screen, 
-                    tower_config['color'], 
-                    (x, y), 
-                    tower_config['range'],
-                    1
+                    screen,                 # Surface
+                    tower_config['color'],  # Color
+                    (x, y),                 # Center
+                    tower_config['range'],  # Radius
+                    1                       # Width (1 for outline)
                 )
                 
                 # Draw semi-transparent fill

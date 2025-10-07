@@ -15,14 +15,18 @@ class Colors:
     CYAN = (0, 255, 255)
 
 # Game settings
-SCREEN_WIDTH = 1024
-SCREEN_HEIGHT = 768
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 980
 FPS = 60
+
+# Game world dimensions
+GAME_WIDTH = 1024
+GAME_HEIGHT = 768
 
 UI_CONFIG = {
     'bg_color': (50, 50, 50),
     'text_color': (255, 255, 255),
-    'font_size_large': 36,
+    'font_size_large': 46,
     'font_size_medium': 24,
     'font_size_small': 18
 }

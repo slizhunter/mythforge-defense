@@ -10,7 +10,7 @@ from .managers.tower_manager import TowerManager
 from .managers.ui_manager import UIManager
 from .config.game_config import GAME_CONFIG
 from .config.tower_config import ELEMENTAL_UPGRADES, TOWER_CONFIG
-from .config.ui_config import UI_CONFIG
+from .config.ui_config import UI_CONFIG, GAME_HEIGHT, GAME_WIDTH
 
 class Game:
     def __init__(self, screen):
@@ -25,6 +25,10 @@ class Game:
         self.screen = screen
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
+
+        # Game world
+        self.game_surface = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
+        self.viewport = [0, 0]
 
         # Managers
         self.wave_manager = WaveManager(self, self.current_map.get_path())
@@ -43,7 +47,7 @@ class Game:
         self.speed_factor = GAME_CONFIG["initial_speed"]
         
         # Game state
-        self.state = "menu"  # "menu", "playing", "paused", "game_over", "victory"
+        self.state = "menu"  # "menu", "level select", "playing", "paused", "game_over", "victory"
         
         # Colors for testing
         self.bg_color = UI_CONFIG["bg_color"]
@@ -71,16 +75,29 @@ class Game:
                     self.speed_factor /= 2.0
             elif event.key == pygame.K_RETURN:
                 if self.state == "menu":
+                    self.state = "level select"
+                elif self.state == "level select":
+                    self.current_map = MAPS[self.ui_manager.selected_level]
+                    self.init_game(self.screen)
                     self.state = "playing"
+            elif event.key == pygame.K_1:
+                if self.state == "level select":
+                    self.ui_manager.selected_level = 'level_1'
+                    print(f"Selected level: {self.ui_manager.selected_level}")
+            elif event.key == pygame.K_2:
+                if self.state == "level select":
+                    self.ui_manager.selected_level = 'level_2'
+                    print(f"Selected level: {self.ui_manager.selected_level}")
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            game_pos = self.translate_mouse_pos(event.pos)
             if self.state == "playing":
                 if event.button == 1: # left mouse click
                     for i, rect in enumerate(self.current_map.get_tower_rects()):
-                        if rect.collidepoint(event.pos):
+                        if rect.collidepoint(game_pos):
                             if self.tower_manager._is_spot_occupied(rect):
                                 # Check for upgrade if tower exists here
                                 for tower in self.tower_manager.towers:
-                                    if tower.rect.collidepoint(event.pos):
+                                    if tower.rect.collidepoint(game_pos):
                                         if self.tower_manager.selected_upgrade_type:
                                             if tower.element == self.tower_manager.selected_upgrade_type:
                                                 print("Tower already upgraded!")
@@ -105,13 +122,13 @@ class Game:
                 elif event.button == 3:  # Right click
                     # Check if clicked on a tower
                     for tower in self.tower_manager.towers:
-                        if tower.rect.collidepoint(event.pos):
+                        if tower.rect.collidepoint(game_pos):
                             self.tower_manager.sell_tower(tower)
                             break
                 elif event.button == 2:  # Middle click/scroll wheel
                 # Change targeting mode
                     for tower in self.tower_manager.towers:
-                        if tower.rect.collidepoint(event.pos):
+                        if tower.rect.collidepoint(game_pos):
                             self.tower_manager.cycle_tower_targeting(tower)
                             break
             ''' --- Alternate tower placement ---
@@ -214,6 +231,9 @@ class Game:
     def draw(self):
         # Clear screen
         self.screen.fill(self.bg_color)
+
+        # Draw game surface
+        self.game_surface.fill(self.bg_color)
         
         # Draw based on current state
         if self.state == "playing":
@@ -227,16 +247,27 @@ class Game:
             self.ui_manager.draw_victory()
         elif self.state == "menu":
             self.ui_manager.draw_menu()
+        elif self.state == "level select":
+            self.ui_manager.draw_level_select(MAPS)
     
     def draw_playing(self):
         self.ui_manager.draw()
-        self.current_map.draw_path(self.screen)
-        self.current_map.draw_tower_spots(self.screen)
-        self.tower_manager.draw(self.screen)
-        self._draw_enemies()
-        self.current_map.draw_spawn_point(self.screen)
-        self.current_map.draw_end_point(self.screen)
-        self.projectiles.draw(self.screen)
+        self.current_map.draw_path(self.game_surface)
+        self.current_map.draw_tower_spots(self.game_surface)
+        self.tower_manager.draw(self.game_surface, self.translate_mouse_pos(pygame.mouse.get_pos()))
+        self._draw_enemies(self.game_surface)
+        self.current_map.draw_spawn_point(self.game_surface)
+        self.current_map.draw_end_point(self.game_surface)
+        self.projectiles.draw(self.game_surface)
+
+        x = (self.screen_width - GAME_WIDTH) // 2
+        y = (self.screen_height - GAME_HEIGHT) // 2
+        
+        # Draw game surface to screen
+        self.screen.blit(self.game_surface, (x, y))
+        
+        # Store viewport position for coordinate translation
+        self.viewport = [x, y]
 
     def load_map(self, map_id):
         """Change to a different map"""
@@ -245,6 +276,17 @@ class Game:
             self.wave_manager.set_path(self.current_map.get_path())
             self.reset_game()
 
-    def _draw_enemies(self):
+    def _draw_enemies(self, surface):
         for enemy in self.enemies:
-            enemy.draw(self.screen)
+            enemy.draw(surface)
+
+    def translate_mouse_pos(self, screen_pos):
+        """Convert screen coordinates to game surface coordinates"""
+        return (
+            screen_pos[0] - self.viewport[0],
+            screen_pos[1] - self.viewport[1]
+        )
+    
+    def get_viewport_offset(self):
+        """Get current viewport position for other elements to use"""
+        return self.viewport

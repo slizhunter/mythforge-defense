@@ -9,11 +9,13 @@ class UIManager:
         self.screen_width = screen.get_width()
         self.screen_height = screen.get_height()
         self.wave_manager = wave_manager
+        self.selected_level = 'level_1'
         
         self.shop_towers = {}  # Dict with (name, rect) for tower shop options
 
         # Initialize fonts
         pygame.font.init()
+        self.title_font = pygame.font.SysFont('Arial', 60)
         self.large_font = pygame.font.Font(None, UI_CONFIG["font_size_large"])
         self.medium_font = pygame.font.SysFont('Arial', UI_CONFIG["font_size_medium"])
         self.small_font = pygame.font.SysFont('Arial', UI_CONFIG["font_size_small"])
@@ -42,21 +44,21 @@ class UIManager:
 
     def _draw_ui_stats(self):
         # --- UI text ---
-        money_txt = self.large_font.render(f"Money: {self.game.money}", True, (255,255,255))
+        money_txt = self.medium_font.render(f"Money: {self.game.money}", True, (255,255,255))
         self.screen.blit(money_txt, UI_POSITIONS["money"])
-        lives_txt = self.large_font.render(f"Lives: {self.game.lives}", True, (255,255,255))
+        lives_txt = self.medium_font.render(f"Lives: {self.game.lives}", True, (255,255,255))
         self.screen.blit(lives_txt, UI_POSITIONS["lives"])
-        speed_txt = self.large_font.render(f"Speed: {self.game.speed_factor}", True, (255,255,255))
+        speed_txt = self.medium_font.render(f"Speed: {self.game.speed_factor}", True, (255,255,255))
         self.screen.blit(speed_txt, UI_POSITIONS["speed"])
 
     def _draw_wave_info(self):
         # --- wave info ---
         wave_info = self.wave_manager.get_wave_info()
-        wave_txt = self.large_font.render(f"Wave: {wave_info['current_wave']}/{wave_info['total_waves']}", True, (255,255,255))
+        wave_txt = self.medium_font.render(f"Wave: {wave_info['current_wave']}/{wave_info['total_waves']}", True, (255,255,255))
         self.screen.blit(wave_txt, UI_POSITIONS["wave"])
         
         if wave_info['break_timer'] > 0:
-            break_txt = self.large_font.render(f"Next wave in: {wave_info['break_timer']:.1f}", True, (255,255,255))
+            break_txt = self.medium_font.render(f"Next wave in: {wave_info['break_timer']:.1f}", True, (255,255,255))
             self.screen.blit(break_txt, (self.screen_width//2 - 100, 50))
 
     def _draw_tower_shop(self):
@@ -185,12 +187,30 @@ class UIManager:
 
     def draw_menu(self):
         self.screen.fill(self.bg_color)
-        title_txt = self.large_font.render("Myth-Forge Defense", True, self.text_color)
+        title_txt = self.title_font.render("Myth-Forge Defense", True, self.text_color)
         title_rect = title_txt.get_rect(center=(self.screen_width//2, self.screen_height//4))
         self.screen.blit(title_txt, title_rect)
         
         prompt_txt = self.medium_font.render("Press ENTER to Start", True, self.text_color)
         prompt_rect = prompt_txt.get_rect(center=(self.screen_width//2, self.screen_height//2))
+        self.screen.blit(prompt_txt, prompt_rect)
+    
+    def draw_level_select(self, levels):
+        self.screen.fill(self.bg_color)
+        title_txt = self.title_font.render("Select Level", True, self.text_color)
+        title_rect = title_txt.get_rect(center=(self.screen_width//2, self.screen_height//6))
+        self.screen.blit(title_txt, title_rect)
+        
+        # Draw level options
+        start_y = self.screen_height//4
+        spacing = 60
+        for i, level in enumerate(levels):
+            level_txt = self.medium_font.render(f"{i+1}. {level}", True, self.text_color)
+            level_rect = level_txt.get_rect(center=(self.screen_width//2, start_y + i * spacing))
+            self.screen.blit(level_txt, level_rect)
+        
+        prompt_txt = self.small_font.render("Press number key to select level", True, self.text_color)
+        prompt_rect = prompt_txt.get_rect(center=(self.screen_width//2, self.screen_height - 50))
         self.screen.blit(prompt_txt, prompt_rect)
 
     def get_shop_towers(self):
