@@ -35,5 +35,14 @@ WAVE_CONFIG = {
                 {"count": 15, "type": 'flying', "interval": 1.0}
             ]
         },
+        {# Wave 5 - Boss Wave
+            "groups": [
+                {"count": 1, "type": 'basic_boss', "interval": 0},
+                {"count": 20, "type": 'basic', "interval": 0.5},
+                {"count": 15, "type": 'fast', "interval": 0.5},
+                {"count": 10, "type": 'tank', "interval": 1.0},
+                {"count": 15, "type": 'flying', "interval": 0.8}
+            ]
+        }
     ]
 }

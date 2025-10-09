@@ -11,28 +11,36 @@ TOWER_CONFIG = {
             'fire_rate': 1.0,  # shots per second
             'projectile_speed': 300,
             'projectile_type': 'regular',
-            'color': Colors.RED
+            'color': Colors.RED,
+            'can_target_flying': False,
+            'can_target_ground': True
         },
         'rapid': {
             'cost': 60,
             'range': 120,
             'fire_rate': 3.0,  # shots per second
             'projectile_type': 'rapid',
-            'color': Colors.PURPLE
+            'color': Colors.PURPLE,
+            'can_target_flying': False,
+            'can_target_ground': True
         },
         'sniper': {
             'cost': 100,
             'range': 300,
             'fire_rate': 0.5,  # shots per second
             'projectile_type': 'sniper',
-            'color': Colors.GREEN
+            'color': Colors.GREEN,
+            'can_target_flying': False,
+            'can_target_ground': True
         },
         'cannon': {
             'cost': 80,
             'range': 180,
             'fire_rate': 0.8,  # shots per second
             'projectile_type': 'shell',
-            'color': Colors.ORANGE
+            'color': Colors.ORANGE,
+            'can_target_flying': False,
+            'can_target_ground': True
         },
         'anti-air': {
             'cost': 120,
@@ -40,7 +48,8 @@ TOWER_CONFIG = {
             'fire_rate': 1.5,  # shots per second
             'projectile_type': 'regular',
             'color': Colors.CYAN,
-            'can_target_flying': True
+            'can_target_flying': True,
+            'can_target_ground': False
         }
     }
 }

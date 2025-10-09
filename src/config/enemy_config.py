@@ -39,6 +39,15 @@ ENEMY_CONFIG = {
             'color': (255, 20, 147),  # Deep pink
             'radius': 12,
             'flying': True
+        },
+        'basic_boss': {
+            'class': 'BasicBossEnemy',
+            'speed': 50,
+            'max_hp': 1000,
+            'value': 20,
+            'color': (80, 140, 190),  # Steel blue
+            'radius': 30,
+            'flying': False
         }
     }
 }
