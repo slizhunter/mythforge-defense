@@ -10,7 +10,8 @@ ENEMY_CONFIG = {
             'max_hp': 25,
             'value': 1,
             'color': (70, 130, 180),  # Steel blue
-            'radius': 14
+            'radius': 14,
+            'flying': False
         },
         'fast': {
             'class': 'FastEnemy',
@@ -18,7 +19,8 @@ ENEMY_CONFIG = {
             'max_hp': 15,
             'value': 2,
             'color': (255, 165, 0),  # Orange
-            'radius': 10
+            'radius': 10,
+            'flying': False
         },
         'tank': {
             'class': 'TankEnemy',
@@ -26,7 +28,17 @@ ENEMY_CONFIG = {
             'max_hp': 100,
             'value': 5,
             'color': (139, 69, 19),  # Saddle brown
-            'radius': 20
+            'radius': 20,
+            'flying': False
+        },
+        'flying': {
+            'class': 'FlyingEnemy',
+            'speed': 150,
+            'max_hp': 20,
+            'value': 3,
+            'color': (255, 20, 147),  # Deep pink
+            'radius': 12,
+            'flying': True
         }
     }
 }

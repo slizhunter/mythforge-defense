@@ -33,6 +33,14 @@ TOWER_CONFIG = {
             'fire_rate': 0.8,  # shots per second
             'projectile_type': 'shell',
             'color': Colors.ORANGE
+        },
+        'anti-air': {
+            'cost': 120,
+            'range': 200,
+            'fire_rate': 1.5,  # shots per second
+            'projectile_type': 'regular',
+            'color': Colors.CYAN,
+            'can_target_flying': True
         }
     }
 }

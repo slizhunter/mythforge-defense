@@ -97,6 +97,8 @@ class TowerManager:
         enemies_list = list(self.game.enemies)
         if tower.targeting_mode == 'first':
                 for enemy in enemies_list:
+                    if enemy.flying and TOWER_CONFIG['type'][tower.type].get('can_target_flying', False) is False:
+                        continue
                     if tower.detect_enemy(enemy.get_pos(), enemy.get_size()): # Detects first enemy in range
                         if not tower.get_target(): # Assign target if none
                             tower.set_target(enemy)
@@ -105,6 +107,8 @@ class TowerManager:
                             tower.set_target(None)
         elif tower.targeting_mode == 'last':
             for enemy in reversed(enemies_list):
+                if enemy.flying and TOWER_CONFIG['type'][tower.type].get('can_target_flying', False) is False:
+                        continue
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     if not tower.get_target():
                         tower.set_target(enemy)
@@ -115,6 +119,8 @@ class TowerManager:
             strongest_enemy = None
             max_hp = -1
             for enemy in enemies_list:
+                if enemy.flying and TOWER_CONFIG['type'][tower.type].get('can_target_flying', False) is False:
+                        continue
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     if enemy.hp > max_hp:
                         max_hp = enemy.hp
@@ -124,6 +130,8 @@ class TowerManager:
             weakest_enemy = None
             min_hp = float('inf')
             for enemy in enemies_list:
+                if enemy.flying and TOWER_CONFIG['type'][tower.type].get('can_target_flying', False) is False:
+                        continue
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     if enemy.hp < min_hp:
                         min_hp = enemy.hp
@@ -133,6 +141,8 @@ class TowerManager:
             closest_enemy = None
             min_dist = float('inf')
             for enemy in self.game.enemies:
+                if enemy.flying and TOWER_CONFIG['type'][tower.type].get('can_target_flying', False) is False:
+                        continue
                 if tower.detect_enemy(enemy.get_pos(), enemy.get_size()):
                     dist = pygame.math.Vector2((tower.x, tower.y)).distance_to(pygame.math.Vector2(enemy.get_pos()))
                     if dist < min_dist:

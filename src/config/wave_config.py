@@ -31,7 +31,8 @@ WAVE_CONFIG = {
                 {"count": 15, "type": 'fast', "interval": 0.8},
                 {"count": 30, "type": 'basic', "interval": 0.3},
                 {"count": 10, "type": 'tank', "interval": 1.2},
-                {"count": 20, "type": 'fast', "interval": 0.8}
+                {"count": 20, "type": 'fast', "interval": 0.8},
+                {"count": 15, "type": 'flying', "interval": 1.0}
             ]
         },
     ]
